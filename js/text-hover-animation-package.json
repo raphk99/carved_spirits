@@ -1,0 +1,58 @@
+{
+  "name": "text-hover-animation",
+  "version": "1.0.0",
+  "description": "A lightweight, highly customizable JavaScript component that creates beautiful letter-by-letter hover animations",
+  "main": "text-hover-animation.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "animation",
+    "hover",
+    "text",
+    "letter",
+    "transition",
+    "ui",
+    "component",
+    "vanilla-js",
+    "javascript",
+    "css",
+    "smooth",
+    "interactive",
+    "typography"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/text-hover-animation"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/text-hover-animation/issues"
+  },
+  "homepage": "https://github.com/yourusername/text-hover-animation#readme",
+  "files": [
+    "text-hover-animation.js",
+    "TEXT_HOVER_ANIMATION_README.md",
+    "text-hover-animation-demo.html"
+  ],
+  "exports": {
+    ".": {
+      "import": "./text-hover-animation.js",
+      "default": "./text-hover-animation.js"
+    }
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

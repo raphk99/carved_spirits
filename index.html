@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Carved Spirits - Digital Gallery">
+  <title>Carved Spirits - Digital Gallery</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">Carved Spirits</a>
+      <ul class="nav-links">
+        <li><a href="#projects" class="nav-link">Gallery</a></li>
+        <li><a href="#about" class="nav-link" id="about-link">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="hero">
+    <canvas class="hero-canvas" id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="hero-title-line">Carved</span>
+        <span class="hero-title-line">Spirits</span>
+      </h1>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </header>
+
+  <!-- Horizontal Scroll Section -->
+  <section class="horizontal-scroll-section" id="horizontal-scroll">
+    <div class="horizontal-scroll-container">
+      <canvas class="horizontal-canvas" id="horizontal-canvas"></canvas>
+      <div class="horizontal-progress">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="projects" id="projects">
+    <div class="container">
+      <h2 class="section-title" data-scroll-animate>Collection</h2>
+      
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <article class="project-card" data-project="1" data-scroll-animate>
+          <div class="project-number">01</div>
+          <div class="project-content">
+            <h3 class="project-title">Geometric Dreams</h3>
+            <p class="project-description">Abstract 3D composition exploring form and space</p>
+            <div class="project-tags">
+              <span class="tag">3D Design</span>
+              <span class="tag">Abstract</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="1">
+            <canvas class="project-canvas" id="canvas-1"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project-card" data-project="2" data-scroll-animate>
+          <div class="project-number">02</div>
+          <div class="project-content">
+            <h3 class="project-title">Fluid Motion</h3>
+            <p class="project-description">Dynamic interaction study with organic shapes</p>
+            <div class="project-tags">
+              <span class="tag">Interactive</span>
+              <span class="tag">Animation</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="2">
+            <canvas class="project-canvas" id="canvas-2"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project-card" data-project="3" data-scroll-animate>
+          <div class="project-number">03</div>
+          <div class="project-content">
+            <h3 class="project-title">Minimal Essence</h3>
+            <p class="project-description">Reductionist approach to 3D visualization</p>
+            <div class="project-tags">
+              <span class="tag">Minimalism</span>
+              <span class="tag">Visual</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="3">
+            <canvas class="project-canvas" id="canvas-3"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project-card" data-project="4" data-scroll-animate>
+          <div class="project-number">04</div>
+          <div class="project-content">
+            <h3 class="project-title">Digital Sculpture</h3>
+            <p class="project-description">Contemporary digital art meets traditional form</p>
+            <div class="project-tags">
+              <span class="tag">Sculpture</span>
+              <span class="tag">Digital Art</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="4">
+            <canvas class="project-canvas" id="canvas-4"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 5 -->
+        <article class="project-card" data-project="5" data-scroll-animate>
+          <div class="project-number">05</div>
+          <div class="project-content">
+            <h3 class="project-title">Organic Form</h3>
+            <p class="project-description">Exploring natural curves and biomorphic design</p>
+            <div class="project-tags">
+              <span class="tag">Organic</span>
+              <span class="tag">Sculpture</span>
+              <span class="tag">Form</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="5">
+            <canvas class="project-canvas" id="canvas-5"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 6 -->
+        <article class="project-card" data-project="6" data-scroll-animate>
+          <div class="project-number">06</div>
+          <div class="project-content">
+            <h3 class="project-title">Cubic Structure</h3>
+            <p class="project-description">Exploring geometric fundamentals and spatial relationships</p>
+            <div class="project-tags">
+              <span class="tag">Geometry</span>
+              <span class="tag">Minimal</span>
+              <span class="tag">Architecture</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="6">
+            <canvas class="project-canvas" id="canvas-6"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 7 -->
+        <article class="project-card" data-project="7" data-scroll-animate>
+          <div class="project-number">07</div>
+          <div class="project-content">
+            <h3 class="project-title">We Gere Mask</h3>
+            <p class="project-description">Made of wood, horns, cowrie shells, hair, spent cartridges, and teeth.</p>
+            <div class="project-tags">
+              <span class="tag">Ivory Cost</span>
+              <span class="tag">Liberia</span>
+              <span class="tag">Dan</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="7">
+            <canvas class="project-canvas" id="canvas-7"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 8 -->
+        <article class="project-card" data-project="8" data-scroll-animate>
+          <div class="project-number">08</div>
+          <div class="project-content">
+            <h3 class="project-title">Citrus Study</h3>
+            <p class="project-description">Photorealistic texturing and natural form capture</p>
+            <div class="project-tags">
+              <span class="tag">Photorealism</span>
+              <span class="tag">Nature</span>
+              <span class="tag">Texture</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="8">
+            <canvas class="project-canvas" id="canvas-8"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 9 -->
+        <article class="project-card" data-project="9" data-scroll-animate>
+          <div class="project-number">09</div>
+          <div class="project-content">
+            <h3 class="project-title">Dan Mask</h3>
+            <p class="project-description">Scared women's face</p>
+            <div class="project-tags">
+              <span class="tag">Ivory Cost</span>
+              <span class="tag">Liberia</span>
+              <span class="tag">Dan</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="9">
+            <canvas class="project-canvas" id="canvas-9"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 10 -->
+        <article class="project-card" data-project="10" data-scroll-animate>
+          <div class="project-number">10</div>
+          <div class="project-content">
+            <h3 class="project-title">Chromatic Grid</h3>
+            <p class="project-description">Color theory application in geometric composition</p>
+            <div class="project-tags">
+              <span class="tag">Color</span>
+              <span class="tag">Grid</span>
+              <span class="tag">Abstract</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="10">
+            <canvas class="project-canvas" id="canvas-10"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 11 -->
+        <article class="project-card" data-project="11" data-scroll-animate>
+          <div class="project-number">11</div>
+          <div class="project-content">
+            <h3 class="project-title">Monochrome Composition</h3>
+            <p class="project-description">Study in grayscale and form without color distraction</p>
+            <div class="project-tags">
+              <span class="tag">Monochrome</span>
+              <span class="tag">Minimal</span>
+              <span class="tag">Study</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="11">
+            <canvas class="project-canvas" id="canvas-11"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+
+        <!-- Project 12 -->
+        <article class="project-card" data-project="12" data-scroll-animate>
+          <div class="project-number">12</div>
+          <div class="project-content">
+            <h3 class="project-title">Portrait Study</h3>
+            <p class="project-description">Character modeling and facial feature exploration</p>
+            <div class="project-tags">
+              <span class="tag">Portrait</span>
+              <span class="tag">Character</span>
+              <span class="tag">Study</span>
+            </div>
+          </div>
+          <div class="project-3d-container" data-3d-target="12">
+            <canvas class="project-canvas" id="canvas-12"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section" id="about">
+    <button class="about-close" aria-label="Close about">
+      <span class="close-icon">&times;</span>
+    </button>
+    <div class="about-container">
+      <canvas class="about-canvas" id="about-canvas"></canvas>
+      <div class="about-content">
+        <div class="about-text">
+          <p>I’m Raph. These are some African masks from various ethnic groups that I’ve grown to be quite fond of, for one reason or another.</p>
+
+<p>I wanted to show them to you mostly because they’ve been on my mind. Growing up, our house was full of them, and if I’m being honest, I thought they were terrifying. I really did.</p>
+
+<p>Lately, though, I’ve felt this need to get a little closer to my roots. This whole project is just a small tribute to that feeling.</p>
+
+<p>Anyway, that’s really all there is to it. I hope you get something out of them.</p>
+
+<p>Best regards</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Expanded Project Modal -->
+  <div class="project-modal" id="project-modal">
+    <button class="modal-close" aria-label="Close modal">
+      <span class="close-icon">&times;</span>
+    </button>
+    <div class="modal-canvas-container">
+      <canvas class="modal-canvas" id="modal-canvas"></canvas>
+    </div>
+    <div class="modal-info">
+      <div class="modal-number"></div>
+      <h2 class="modal-title"></h2>
+      <p class="modal-description"></p>
+      <div class="modal-tags"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

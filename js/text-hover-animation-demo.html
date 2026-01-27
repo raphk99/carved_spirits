@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TextHoverAnimation - Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+      background: #0a0a0a;
+      color: #e8e8e8;
+      padding: 4rem 2rem;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #808080;
+      margin-bottom: 4rem;
+      font-size: 1.125rem;
+    }
+
+    .demo-section {
+      margin-bottom: 4rem;
+      padding: 3rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    .demo-section h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    .demo-section p {
+      color: #808080;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+    }
+
+    .demo-section code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
+
+    /* Navigation Demo */
+    .nav-demo {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Heading Demo */
+    .heading-demo {
+      text-align: center;
+      padding: 3rem 0;
+    }
+
+    .animated-heading {
+      font-size: 4rem;
+      font-weight: 300;
+      cursor: pointer;
+    }
+
+    /* Button Demo */
+    .button-demo {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 2rem;
+    }
+
+    .animated-btn {
+      padding: 1rem 2rem;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: border-color 0.3s ease;
+    }
+
+    .animated-btn:hover {
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Direction Demo */
+    .direction-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .direction-item {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .direction-label {
+      display: block;
+      font-size: 0.75rem;
+      color: #808080;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .direction-text {
+      font-size: 1.5rem;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    /* Custom Easing Demo */
+    .easing-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .easing-item {
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .easing-label {
+      display: block;
+      font-size: 0.75rem;
+      color: #808080;
+      margin-bottom: 1rem;
+      font-family: monospace;
+    }
+
+    .easing-text {
+      font-size: 1.25rem;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .code-block {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      color: #e8e8e8;
+      font-family: monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TextHoverAnimation Demo</h1>
+    <p class="subtitle">Hover over any text below to see the animation in action</p>
+
+    <!-- Navigation Links Demo -->
+    <div class="demo-section">
+      <h2>Navigation Links</h2>
+      <p>Classic use case - smooth, elegant navigation hover effect</p>
+      <div class="nav-demo">
+        <a href="#" class="nav-link nav-link-1">Home</a>
+        <a href="#" class="nav-link nav-link-1">Projects</a>
+        <a href="#" class="nav-link nav-link-1">About</a>
+        <a href="#" class="nav-link nav-link-1">Contact</a>
+      </div>
+      <div class="code-block">
+        <pre>new TextHoverAnimation('.nav-link', {
+  duration: 700,
+  stagger: 40,
+  easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+  direction: 'up'
+});</pre>
+      </div>
+    </div>
+
+    <!-- Large Heading Demo -->
+    <div class="demo-section">
+      <h2>Large Heading</h2>
+      <p>Slower, more dramatic effect for hero sections</p>
+      <div class="heading-demo">
+        <h1 class="animated-heading">Creative Designer</h1>
+      </div>
+      <div class="code-block">
+        <pre>new TextHoverAnimation('.animated-heading', {
+  duration: 900,
+  stagger: 60,
+  easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+  direction: 'up'
+});</pre>
+      </div>
+    </div>
+
+    <!-- Button Demo -->
+    <div class="demo-section">
+      <h2>Buttons</h2>
+      <p>Fast, snappy animations perfect for CTAs</p>
+      <div class="button-demo">
+        <button class="animated-btn animated-btn-1">Get Started</button>
+        <button class="animated-btn animated-btn-1">Learn More</button>
+        <button class="animated-btn animated-btn-1">Contact Us</button>
+      </div>
+      <div class="code-block">
+        <pre>new TextHoverAnimation('.animated-btn', {
+  duration: 400,
+  stagger: 20,
+  easing: 'cubic-bezier(0.76, 0, 0.24, 1)',
+  direction: 'up'
+});</pre>
+      </div>
+    </div>
+
+    <!-- Direction Demo -->
+    <div class="demo-section">
+      <h2>Animation Directions</h2>
+      <p>Choose from 4 different animation directions</p>
+      <div class="direction-demo">
+        <div class="direction-item">
+          <span class="direction-label">Direction: Up</span>
+          <div class="direction-text direction-up">Hover Me</div>
+        </div>
+        <div class="direction-item">
+          <span class="direction-label">Direction: Down</span>
+          <div class="direction-text direction-down">Hover Me</div>
+        </div>
+        <div class="direction-item">
+          <span class="direction-label">Direction: Left</span>
+          <div class="direction-text direction-left">Hover Me</div>
+        </div>
+        <div class="direction-item">
+          <span class="direction-label">Direction: Right</span>
+          <div class="direction-text direction-right">Hover Me</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Easing Demo -->
+    <div class="demo-section">
+      <h2>Custom Easing Functions</h2>
+      <p>Different easing curves create unique feels</p>
+      <div class="easing-demo">
+        <div class="easing-item">
+          <span class="easing-label">Smooth (default)</span>
+          <div class="easing-text easing-smooth">Animation</div>
+        </div>
+        <div class="easing-item">
+          <span class="easing-label">Bounce</span>
+          <div class="easing-text easing-bounce">Animation</div>
+        </div>
+        <div class="easing-item">
+          <span class="easing-label">Elastic</span>
+          <div class="easing-text easing-elastic">Animation</div>
+        </div>
+        <div class="easing-item">
+          <span class="easing-label">Quick</span>
+          <div class="easing-text easing-quick">Animation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { TextHoverAnimation } from './text-hover-animation.js';
+
+    // Navigation Links
+    new TextHoverAnimation('.nav-link-1', {
+      duration: 700,
+      stagger: 40,
+      easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+      direction: 'up'
+    });
+
+    // Large Heading
+    new TextHoverAnimation('.animated-heading', {
+      duration: 900,
+      stagger: 60,
+      easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+      direction: 'up'
+    });
+
+    // Buttons
+    new TextHoverAnimation('.animated-btn-1', {
+      duration: 400,
+      stagger: 20,
+      easing: 'cubic-bezier(0.76, 0, 0.24, 1)',
+      direction: 'up'
+    });
+
+    // Direction Demos
+    new TextHoverAnimation('.direction-up', {
+      duration: 600,
+      stagger: 35,
+      direction: 'up'
+    });
+
+    new TextHoverAnimation('.direction-down', {
+      duration: 600,
+      stagger: 35,
+      direction: 'down'
+    });
+
+    new TextHoverAnimation('.direction-left', {
+      duration: 600,
+      stagger: 35,
+      direction: 'left'
+    });
+
+    new TextHoverAnimation('.direction-right', {
+      duration: 600,
+      stagger: 35,
+      direction: 'right'
+    });
+
+    // Easing Demos
+    new TextHoverAnimation('.easing-smooth', {
+      duration: 700,
+      stagger: 40,
+      easing: 'cubic-bezier(0.65, 0, 0.35, 1)'
+    });
+
+    new TextHoverAnimation('.easing-bounce', {
+      duration: 800,
+      stagger: 45,
+      easing: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+    });
+
+    new TextHoverAnimation('.easing-elastic', {
+      duration: 900,
+      stagger: 50,
+      easing: 'cubic-bezier(0.68, -0.6, 0.32, 1.6)'
+    });
+
+    new TextHoverAnimation('.easing-quick', {
+      duration: 400,
+      stagger: 25,
+      easing: 'cubic-bezier(0.76, 0, 0.24, 1)'
+    });
+
+    console.log('TextHoverAnimation demos initialized!');
+  </script>
+</body>
+</html>
