@@ -67,6 +67,41 @@ npm run build
 npm run preview
 ```
 
+## Deployment
+
+### GitHub Pages
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+
+#### Initial Setup
+
+1. **Enable GitHub Pages** in your repository settings:
+   - Go to Settings → Pages
+   - Under "Source", select "GitHub Actions"
+
+2. **Push to main branch**: The workflow will automatically build and deploy your site when you push to the `main` branch.
+
+3. **Your site will be available at**: `https://[your-username].github.io/carved_spirits/`
+
+#### Custom Domain
+
+If you want to use a custom domain:
+- Update the `base` path in `vite.config.js` (remove `/carved_spirits/` or set to `/`)
+- Add your custom domain in GitHub Pages settings
+- Configure your DNS records as instructed by GitHub
+
+#### Manual Deployment
+
+If you prefer to deploy manually:
+
+```bash
+# Build for GitHub Pages
+GITHUB_PAGES=true npm run build
+
+# The dist folder contains your production build
+# You can deploy it using any static hosting service
+```
+
 ## 3D Models
 
 Each project card features a unique 3D geometry:
