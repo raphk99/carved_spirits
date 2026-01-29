@@ -1141,6 +1141,1429 @@
     </div>
   </div>
 
-  <script type="module" src="/js/main.js"></script>
+  <!-- Load Three.js and dependencies from CDN -->
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+        "@studio-freight/lenis": "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.mjs"
+      }
+    }
+  </script>
+  
+  <script type="module">
+    // Import dependencies
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import Lenis from '@studio-freight/lenis';
+
+    // ===== PLY Model Loader =====
+    const PLY_MODELS_CONFIG = [
+      {
+        filename: 'bawl.glb',
+        title: 'Geometric Dreams',
+        subtitle: 'Abstract 3D composition exploring form and space',
+        tags: ['3D Design', 'Abstract'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '1'
+      },
+      {
+        filename: 'half.glb',
+        title: 'Fluid Motion',
+        subtitle: 'Dynamic interaction study with organic shapes',
+        tags: ['Interactive', 'Animation'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '2'
+      },
+      {
+        filename: 'jarjar.glb',
+        title: 'Minimal Essence',
+        subtitle: 'Reductionist approach to 3D visualization',
+        tags: ['Minimalism', 'Visual'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '3'
+      },
+      {
+        filename: 'long.glb',
+        title: 'Digital Sculpture',
+        subtitle: 'Contemporary digital art meets traditional form',
+        tags: ['Sculpture', 'Digital Art'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '4'
+      },
+      {
+        filename: 'oreille.glb',
+        title: 'Organic Form',
+        subtitle: 'Exploring natural curves and biomorphic design',
+        tags: ['Organic', 'Sculpture', 'Form'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '5'
+      },
+      {
+        filename: 'box.glb',
+        title: 'Cubic Structure',
+        subtitle: 'Exploring geometric fundamentals and spatial relationships',
+        tags: ['Geometry', 'Minimal', 'Architecture'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '6'
+      },
+      {
+        filename: 'dragon.glb',
+        title: 'Mythical Form',
+        subtitle: 'Organic complexity and detailed surface modeling',
+        tags: ['Character', 'Organic', 'Fantasy'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '7'
+      },
+      {
+        filename: 'orange.glb',
+        title: 'Citrus Study',
+        subtitle: 'Photorealistic texturing and natural form capture',
+        tags: ['Photorealism', 'Nature', 'Texture'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '8'
+      },
+      {
+        filename: 'scar.glb',
+        title: 'Surface Detail',
+        subtitle: 'Intricate surface modeling and material exploration',
+        tags: ['Detail', 'Material', 'Texture'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '9'
+      },
+      {
+        filename: 'squarecolors.glb',
+        title: 'Chromatic Grid',
+        subtitle: 'Color theory application in geometric composition',
+        tags: ['Color', 'Grid', 'Abstract'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '10'
+      },
+      {
+        filename: 'squaregrey.glb',
+        title: 'Monochrome Composition',
+        subtitle: 'Study in grayscale and form without color distraction',
+        tags: ['Monochrome', 'Minimal', 'Study'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '11'
+      },
+      {
+        filename: 'whiteface.glb',
+        title: 'Portrait Study',
+        subtitle: 'Character modeling and facial feature exploration',
+        tags: ['Portrait', 'Character', 'Study'],
+        scale: 1.0,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '12'
+      }
+    ];
+
+    class PLYModelLoader {
+      constructor() {
+        this.loader = new GLTFLoader();
+        this.basePath = '/models/';
+      }
+
+      loadModel(config) {
+        return new Promise((resolve, reject) => {
+          const path = this.basePath + config.filename;
+          
+          console.log(`Loading GLB model: ${config.filename}`);
+          
+          this.loader.load(
+            path,
+            (gltf) => {
+              const object = gltf.scene;
+              
+              const box = new THREE.Box3().setFromObject(object);
+              const center = new THREE.Vector3();
+              box.getCenter(center);
+              object.position.sub(center);
+              
+              object.traverse((child) => {
+                if (child.isMesh) {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+                }
+              });
+              
+              object.scale.set(config.scale, config.scale, config.scale);
+              object.position.set(
+                config.position.x,
+                config.position.y,
+                config.position.z
+              );
+              object.rotation.set(
+                config.rotation.x,
+                config.rotation.y,
+                config.rotation.z
+              );
+              
+              object.userData.plyConfig = config;
+              object.userData.isPLYModel = true;
+              object.userData.title = config.title || config.filename;
+              object.userData.subtitle = config.subtitle || '';
+              object.userData.tags = config.tags || [];
+              
+              console.log(`Successfully loaded GLB model: ${config.filename}`);
+              resolve(object);
+            },
+            (progress) => {
+              const percentComplete = (progress.loaded / progress.total) * 100;
+              if (!isNaN(percentComplete)) {
+                console.log(`Loading ${config.filename}: ${percentComplete.toFixed(1)}%`);
+              }
+            },
+            (error) => {
+              console.error(`Error loading GLB model ${config.filename}:`, error);
+              reject(error);
+            }
+          );
+        });
+      }
+    }
+
+    // ===== Text Hover Animation =====
+    class TextHoverAnimation {
+      static defaults = {
+        duration: 600,
+        stagger: 35,
+        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+        direction: 'up',
+        preserveSpaces: true,
+        classNames: {
+          wrapper: 'th-letters-wrapper',
+          container: 'th-letter-container',
+          letter: 'th-letter',
+          original: 'th-letter-original',
+          clone: 'th-letter-clone',
+          hovered: 'th-hovered'
+        },
+        onHoverStart: null,
+        onHoverEnd: null,
+        onLetterHoverStart: null,
+        onLetterHoverEnd: null
+      };
+
+      constructor(selector, options = {}) {
+        this.options = { ...TextHoverAnimation.defaults, ...options };
+        this.elements = this._getElements(selector);
+        this.animationId = `th-animation-${Math.random().toString(36).substr(2, 9)}`;
+        
+        if (this.elements.length === 0) {
+          console.warn('TextHoverAnimation: No elements found for selector:', selector);
+          return;
+        }
+        
+        this._injectStyles();
+        this._init();
+      }
+
+      _getElements(selector) {
+        if (typeof selector === 'string') {
+          return Array.from(document.querySelectorAll(selector));
+        } else if (selector instanceof NodeList) {
+          return Array.from(selector);
+        } else if (Array.isArray(selector)) {
+          return selector;
+        } else if (selector instanceof HTMLElement) {
+          return [selector];
+        }
+        return [];
+      }
+
+      _injectStyles() {
+        const styleId = `th-animation-styles-${this.animationId}`;
+        
+        if (document.getElementById(styleId)) return;
+        
+        const { duration, easing, direction, classNames } = this.options;
+        const transforms = this._getTransforms(direction);
+        
+        const css = `
+          .${classNames.wrapper} {
+            display: inline-flex;
+          }
+          
+          .${classNames.container} {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            height: 1em;
+            line-height: 1em;
+            vertical-align: baseline;
+          }
+          
+          .${classNames.letter} {
+            display: block;
+            transition: transform ${duration}ms ${easing};
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+          
+          .${classNames.original} {
+            transform: ${transforms.originalDefault};
+          }
+          
+          .${classNames.clone} {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: ${transforms.cloneDefault};
+          }
+          
+          .${classNames.container}.${classNames.hovered} .${classNames.original} {
+            transform: ${transforms.originalHovered};
+          }
+          
+          .${classNames.container}.${classNames.hovered} .${classNames.clone} {
+            transform: ${transforms.cloneHovered};
+          }
+        `;
+        
+        const styleEl = document.createElement('style');
+        styleEl.id = styleId;
+        styleEl.textContent = css;
+        document.head.appendChild(styleEl);
+      }
+
+      _getTransforms(direction) {
+        const transforms = {
+          up: {
+            originalDefault: 'translateY(0)',
+            cloneDefault: 'translateY(100%)',
+            originalHovered: 'translateY(-100%)',
+            cloneHovered: 'translateY(0)'
+          },
+          down: {
+            originalDefault: 'translateY(0)',
+            cloneDefault: 'translateY(-100%)',
+            originalHovered: 'translateY(100%)',
+            cloneHovered: 'translateY(0)'
+          },
+          left: {
+            originalDefault: 'translateX(0)',
+            cloneDefault: 'translateX(100%)',
+            originalHovered: 'translateX(-100%)',
+            cloneHovered: 'translateX(0)'
+          },
+          right: {
+            originalDefault: 'translateX(0)',
+            cloneDefault: 'translateX(-100%)',
+            originalHovered: 'translateX(100%)',
+            cloneHovered: 'translateX(0)'
+          }
+        };
+        
+        return transforms[direction] || transforms.up;
+      }
+
+      _init() {
+        this.elements.forEach(element => {
+          this._splitText(element);
+          this._addEventListeners(element);
+        });
+      }
+
+      _splitText(element) {
+        const text = element.textContent;
+        const { classNames, preserveSpaces } = this.options;
+        
+        element.setAttribute('data-th-original-text', text);
+        element.innerHTML = '';
+        element.style.position = 'relative';
+        element.style.display = 'inline-block';
+
+        const wrapper = document.createElement('span');
+        wrapper.className = classNames.wrapper;
+
+        text.split('').forEach((char, index) => {
+          const letterContainer = document.createElement('span');
+          letterContainer.className = classNames.container;
+          letterContainer.setAttribute('data-th-index', index);
+          
+          const displayChar = (char === ' ' && preserveSpaces) ? '\u00A0' : char;
+          
+          const letterOriginal = document.createElement('span');
+          letterOriginal.className = `${classNames.letter} ${classNames.original}`;
+          letterOriginal.textContent = displayChar;
+          letterOriginal.setAttribute('aria-hidden', 'true');
+          
+          const letterClone = document.createElement('span');
+          letterClone.className = `${classNames.letter} ${classNames.clone}`;
+          letterClone.textContent = displayChar;
+          letterClone.setAttribute('aria-hidden', 'true');
+          
+          letterContainer.appendChild(letterOriginal);
+          letterContainer.appendChild(letterClone);
+          wrapper.appendChild(letterContainer);
+        });
+
+        element.appendChild(wrapper);
+      }
+
+      _addEventListeners(element) {
+        element.addEventListener('mouseenter', () => this._animateIn(element));
+        element.addEventListener('mouseleave', () => this._animateOut(element));
+      }
+
+      _animateIn(element) {
+        const { classNames, stagger, onHoverStart, onLetterHoverStart } = this.options;
+        const letterContainers = element.querySelectorAll(`.${classNames.container}`);
+        
+        if (typeof onHoverStart === 'function') {
+          onHoverStart(element);
+        }
+        
+        letterContainers.forEach((container, index) => {
+          const timeoutId = setTimeout(() => {
+            container.classList.add(classNames.hovered);
+            
+            if (typeof onLetterHoverStart === 'function') {
+              onLetterHoverStart(container, index);
+            }
+          }, index * stagger);
+          
+          container.setAttribute('data-th-timeout', timeoutId);
+        });
+      }
+
+      _animateOut(element) {
+        const { classNames, stagger, onHoverEnd, onLetterHoverEnd } = this.options;
+        const letterContainers = element.querySelectorAll(`.${classNames.container}`);
+        
+        letterContainers.forEach((container, index) => {
+          const timeoutId = container.getAttribute('data-th-timeout');
+          if (timeoutId) {
+            clearTimeout(parseInt(timeoutId));
+          }
+          
+          const reverseTimeoutId = setTimeout(() => {
+            container.classList.remove(classNames.hovered);
+            
+            if (typeof onLetterHoverEnd === 'function') {
+              onLetterHoverEnd(container, index);
+            }
+          }, index * stagger);
+          
+          container.setAttribute('data-th-timeout', reverseTimeoutId);
+        });
+        
+        if (typeof onHoverEnd === 'function') {
+          onHoverEnd(element);
+        }
+      }
+    }
+
+    // ===== Lenis Smooth Scrolling =====
+    function initLenis() {
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+        infinite: false,
+      });
+
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+
+      requestAnimationFrame(raf);
+
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            lenis.scrollTo(target, {
+              offset: -100,
+              duration: 1.5,
+            });
+          }
+        });
+      });
+
+      return lenis;
+    }
+
+    function initHeroScrollAnimation(lenis, heroTextScene) {
+      const hero = document.getElementById('hero');
+      const heroCanvas = document.getElementById('hero-canvas');
+      const heroContent = document.querySelector('.hero-content');
+      const scrollIndicator = document.querySelector('.scroll-indicator');
+      const projectsSection = document.getElementById('projects');
+      
+      if (!hero || !projectsSection) return;
+
+      lenis.on('scroll', ({ scroll }) => {
+        const heroHeight = hero.offsetHeight;
+        const scrollProgress = Math.min(1, Math.max(0, scroll / (heroHeight * 0.8)));
+        
+        if (heroTextScene) {
+          heroTextScene.setScrollProgress(scrollProgress);
+        }
+        
+        const opacity = 1 - scrollProgress;
+        const fadeOpacity = Math.max(0, 1 - scrollProgress * 1.5);
+        
+        if (heroCanvas) {
+          heroCanvas.style.opacity = fadeOpacity;
+        }
+        
+        if (heroContent) {
+          heroContent.style.opacity = fadeOpacity;
+        }
+        
+        if (scrollIndicator) {
+          scrollIndicator.style.opacity = Math.max(0, 1 - scrollProgress * 3);
+        }
+        
+        const scale = 1 + scrollProgress * 0.1;
+        if (hero) {
+          hero.style.transform = `scale(${scale})`;
+        }
+      });
+    }
+
+    function initScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      }, observerOptions);
+
+      const animateElements = document.querySelectorAll('[data-scroll-animate]');
+      animateElements.forEach(el => observer.observe(el));
+
+      return observer;
+    }
+
+    function initHorizontalScrollAnimation(lenis, horizontalScene) {
+      const horizontalSection = document.getElementById('horizontal-scroll');
+      const progressBar = document.querySelector('.progress-bar');
+      
+      if (!horizontalSection || !horizontalScene) return;
+
+      lenis.on('scroll', ({ scroll }) => {
+        const sectionTop = horizontalSection.offsetTop;
+        const sectionHeight = horizontalSection.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        
+        const sectionStart = sectionTop;
+        const sectionEnd = sectionTop + sectionHeight - viewportHeight;
+        
+        if (scroll >= sectionStart && scroll <= sectionEnd) {
+          const scrollInSection = scroll - sectionStart;
+          const scrollableHeight = sectionHeight - viewportHeight;
+          const progress = Math.min(1, Math.max(0, scrollInSection / scrollableHeight));
+          
+          horizontalScene.setScrollProgress(progress);
+          
+          if (progressBar) {
+            progressBar.style.width = `${progress * 100}%`;
+          }
+        } else if (scroll < sectionStart) {
+          horizontalScene.setScrollProgress(0);
+          if (progressBar) {
+            progressBar.style.width = '0%';
+          }
+        } else {
+          horizontalScene.setScrollProgress(1);
+          if (progressBar) {
+            progressBar.style.width = '100%';
+          }
+        }
+      });
+    }
+
+    // ===== Hero Text Scene =====
+    class HeroTextScene {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.treeModel = null;
+        this.animationId = null;
+        this.mouse = new THREE.Vector2();
+        this.targetRotation = { x: 0, y: 0 };
+        this.currentRotation = { x: 0, y: 0 };
+        this.scrollProgress = 0;
+        this.isLoaded = false;
+
+        this.init();
+      }
+
+      init() {
+        this.scene = new THREE.Scene();
+
+        const aspect = window.innerWidth / (window.innerHeight * 1.5);
+        this.camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
+        this.camera.position.set(0, 0, 15);
+
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          alpha: true,
+          antialias: true,
+        });
+        this.renderer.setSize(window.innerWidth, window.innerHeight * 1.5);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setClearColor(0x000000, 0);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        this.scene.add(ambientLight);
+
+        const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight1.position.set(5, 10, 5);
+        this.scene.add(directionalLight1);
+
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+        directionalLight2.position.set(-5, -10, 5);
+        this.scene.add(directionalLight2);
+
+        const pointLight = new THREE.PointLight(0xffffff, 0.5);
+        pointLight.position.set(0, 0, 10);
+        this.scene.add(pointLight);
+
+        this.loadTreeModel();
+
+        window.addEventListener('mousemove', this.onMouseMove.bind(this));
+        window.addEventListener('resize', this.handleResize.bind(this));
+
+        this.animate();
+      }
+
+      loadTreeModel() {
+        const loader = new GLTFLoader();
+        
+        loader.load(
+          '/tree.glb',
+          (gltf) => {
+            this.treeModel = gltf.scene;
+            
+            const box = new THREE.Box3().setFromObject(this.treeModel);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            
+            this.treeModel.position.x = -center.x;
+            this.treeModel.position.y = -center.y;
+            this.treeModel.position.z = -center.z;
+            
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 20 / maxDim;
+            this.treeModel.scale.set(scale, scale, scale);
+            
+            this.treeModel.traverse((child) => {
+              if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+                
+                if (child.material) {
+                  child.material.needsUpdate = true;
+                }
+              }
+            });
+            
+            this.scene.add(this.treeModel);
+            this.isLoaded = true;
+            console.log('Tree model loaded successfully');
+          },
+          (progress) => {
+            console.log('Loading tree model:', (progress.loaded / progress.total * 100) + '%');
+          },
+          (error) => {
+            console.error('Error loading tree model:', error);
+          }
+        );
+      }
+
+      onMouseMove(event) {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      }
+
+      setScrollProgress(progress) {
+        this.scrollProgress = Math.min(1, Math.max(0, progress));
+      }
+
+      animate() {
+        this.animationId = requestAnimationFrame(this.animate.bind(this));
+
+        if (this.treeModel) {
+          this.targetRotation.y = this.mouse.x * 0.1;
+          this.targetRotation.x = this.mouse.y * 0.05;
+
+          this.currentRotation.x += (this.targetRotation.x - this.currentRotation.x) * 0.05;
+          this.currentRotation.y += (this.targetRotation.y - this.currentRotation.y) * 0.05;
+
+          this.treeModel.rotation.y = this.currentRotation.y;
+          this.treeModel.rotation.x = this.currentRotation.x;
+
+          this.treeModel.rotation.y += 0.001;
+        }
+
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      handleResize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight * 1.5;
+
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      }
+
+      dispose() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+
+        if (this.treeModel) {
+          this.treeModel.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+              } else {
+                child.material.dispose();
+              }
+            }
+          });
+          this.scene.remove(this.treeModel);
+        }
+
+        if (this.renderer) {
+          this.renderer.dispose();
+        }
+
+        window.removeEventListener('mousemove', this.onMouseMove);
+        window.removeEventListener('resize', this.handleResize);
+      }
+    }
+
+    // ===== Horizontal Scroll Scene =====
+    class HorizontalScrollScene {
+      constructor(container) {
+        this.container = container;
+        this.canvas = container.querySelector('.horizontal-canvas');
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.shapes = [];
+        this.animationId = null;
+        this.currentShapeIndex = 0;
+        this.scrollProgress = 0;
+        
+        this.init();
+      }
+
+      init() {
+        this.scene = new THREE.Scene();
+        
+        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+        this.camera.position.z = 5;
+        
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          alpha: true,
+          antialias: true,
+        });
+        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setClearColor(0x000000, 0);
+        
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        this.scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 5, 5);
+        this.scene.add(directionalLight);
+        
+        const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        backLight.position.set(-5, -5, -5);
+        this.scene.add(backLight);
+        
+        this.loadPLYModels();
+        
+        this.animate();
+      }
+
+      async loadPLYModels() {
+        if (PLY_MODELS_CONFIG.length === 0) {
+          console.warn('No GLB models configured to load');
+          return;
+        }
+        
+        try {
+          const loader = new PLYModelLoader();
+          
+          const modelsWithProjects = PLY_MODELS_CONFIG.filter(config => config.projectId);
+          const modelsWithoutProjects = PLY_MODELS_CONFIG.filter(config => !config.projectId);
+          
+          modelsWithProjects.sort((a, b) => parseInt(a.projectId) - parseInt(b.projectId));
+          
+          const allModelsInOrder = [...modelsWithProjects, ...modelsWithoutProjects];
+          
+          for (const config of allModelsInOrder) {
+            const model = await loader.loadModel(config);
+            
+            model.position.set(10, 0, 0);
+            model.scale.set(0, 0, 0);
+            model.userData.targetPosition = { x: 0, y: 0, z: 0 };
+            model.userData.index = this.shapes.length;
+            model.userData.visible = false;
+            model.userData.isGLBModel = true;
+            
+            this.shapes.push(model);
+            this.scene.add(model);
+            
+            console.log(`Added horizontal scroll model ${this.shapes.length}: ${model.userData.title}`);
+          }
+          
+          console.log(`Configured ${this.shapes.length} GLB model(s) in horizontal scroll`);
+        } catch (error) {
+          console.error('Error loading GLB models in HorizontalScrollScene:', error);
+        }
+      }
+
+      updateShapes(progress) {
+        const numShapes = this.shapes.length;
+        const progressPerShape = 1 / numShapes;
+        
+        this.shapes.forEach((shape, index) => {
+          const shapeStartProgress = index * progressPerShape;
+          const shapeEndProgress = (index + 1) * progressPerShape;
+          
+          let shapeProgress = (progress - shapeStartProgress) / progressPerShape;
+          shapeProgress = Math.max(0, Math.min(1, shapeProgress));
+          
+          const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+          const easedProgress = easeOutQuart(shapeProgress);
+          
+          const startX = 10;
+          const targetPos = shape.userData.targetPosition;
+          const endX = typeof targetPos === 'object' ? targetPos.x : targetPos.x || 0;
+          shape.position.x = startX + (endX - startX) * easedProgress;
+          
+          const scale = easedProgress;
+          shape.scale.set(scale, scale, scale);
+          
+          if (shapeProgress > 0.01) {
+            shape.userData.visible = true;
+          }
+          
+          if (progress > shapeEndProgress) {
+            const exitProgress = (progress - shapeEndProgress) / (progressPerShape * 0.5);
+            const exitEased = Math.min(1, exitProgress);
+            
+            shape.position.x = endX - exitEased * 15;
+            
+            const opacity = 1 - exitEased;
+            shape.traverse((child) => {
+              if (child.material) {
+                if (Array.isArray(child.material)) {
+                  child.material.forEach(mat => {
+                    mat.opacity = opacity;
+                    mat.transparent = true;
+                  });
+                } else {
+                  child.material.opacity = opacity;
+                  child.material.transparent = true;
+                }
+              }
+            });
+            
+            const exitScale = 1 - exitEased * 0.5;
+            shape.scale.set(exitScale, exitScale, exitScale);
+          } else {
+            shape.traverse((child) => {
+              if (child.material) {
+                if (Array.isArray(child.material)) {
+                  child.material.forEach(mat => {
+                    mat.opacity = easedProgress;
+                    mat.transparent = easedProgress < 1;
+                  });
+                } else {
+                  child.material.opacity = easedProgress;
+                  child.material.transparent = easedProgress < 1;
+                }
+              }
+            });
+          }
+        });
+      }
+
+      animate() {
+        this.animationId = requestAnimationFrame(this.animate.bind(this));
+        
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      setScrollProgress(progress) {
+        this.scrollProgress = progress;
+        this.updateShapes(progress);
+      }
+
+      handleResize() {
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      }
+
+      dispose() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+        
+        this.shapes.forEach(shape => {
+          shape.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+              } else {
+                child.material.dispose();
+              }
+            }
+          });
+          this.scene.remove(shape);
+        });
+        this.shapes = [];
+        
+        if (this.renderer) {
+          this.renderer.dispose();
+        }
+      }
+    }
+
+    // ===== Scene Manager =====
+    class SceneManager {
+      constructor(canvas, projectId) {
+        this.canvas = canvas;
+        this.projectId = projectId;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.mesh = null;
+        this.plyModels = [];
+        this.animationId = null;
+        this.mouse = new THREE.Vector2();
+        this.targetRotation = new THREE.Euler();
+        this.isHovered = false;
+        
+        this.init();
+      }
+
+      init() {
+        this.scene = new THREE.Scene();
+        
+        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+        this.camera.position.z = 5;
+        
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          alpha: true,
+          antialias: true,
+        });
+        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setClearColor(0x000000, 0);
+        
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        this.scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 5, 5);
+        this.scene.add(directionalLight);
+        
+        const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+        backLight.position.set(-5, -5, -5);
+        this.scene.add(backLight);
+        
+        this.loadPLYModels();
+        
+        this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.canvas.addEventListener('mouseenter', () => this.isHovered = true);
+        this.canvas.addEventListener('mouseleave', () => this.isHovered = false);
+        
+        this.animate();
+      }
+
+      async loadPLYModels() {
+        if (PLY_MODELS_CONFIG.length === 0) {
+          console.warn('No GLB models configured to load');
+          return;
+        }
+        
+        try {
+          const loader = new PLYModelLoader();
+          
+          const assignedConfigs = PLY_MODELS_CONFIG.filter(config => 
+            config.projectId === this.projectId
+          );
+          
+          const unassignedConfigs = PLY_MODELS_CONFIG.filter(config => 
+            !config.projectId
+          );
+          
+          if (assignedConfigs.length > 0) {
+            const assignedModels = await Promise.all(
+              assignedConfigs.map(config => loader.loadModel(config))
+            );
+            
+            assignedModels.forEach(model => {
+              this.plyModels.push(model);
+              this.scene.add(model);
+              console.log(`Added model: ${model.userData.title}`);
+            });
+          }
+          
+          if (unassignedConfigs.length > 0 && this.projectId === '1') {
+            const unassignedModels = await Promise.all(
+              unassignedConfigs.map(config => loader.loadModel(config))
+            );
+            
+            unassignedModels.forEach(model => {
+              this.plyModels.push(model);
+              this.scene.add(model);
+              console.log(`Added unassigned model: ${model.userData.title}`);
+            });
+          }
+        } catch (error) {
+          console.error('Error loading GLB models in SceneManager:', error);
+        }
+      }
+
+      onMouseMove(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      }
+
+      animate() {
+        this.animationId = requestAnimationFrame(this.animate.bind(this));
+        
+        this.plyModels.forEach(model => {
+          if (this.isHovered) {
+            const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
+            
+            this.targetRotation.y = initialRotation.y + this.mouse.x * 0.5;
+            this.targetRotation.x = initialRotation.x + this.mouse.y * 0.5;
+            
+            model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.05;
+            model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.05;
+          }
+        });
+        
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      handleResize() {
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      }
+
+      dispose() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+        
+        this.plyModels.forEach(model => {
+          model.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+              } else {
+                child.material.dispose();
+              }
+            }
+          });
+          this.scene.remove(model);
+        });
+        this.plyModels = [];
+        
+        if (this.renderer) {
+          this.renderer.dispose();
+        }
+        
+        this.canvas.removeEventListener('mousemove', this.onMouseMove);
+      }
+    }
+
+    class ModalSceneManager extends SceneManager {
+      constructor(canvas, projectId) {
+        super(canvas, projectId);
+        this.isExpanded = true;
+      }
+
+      async loadPLYModels() {
+        if (PLY_MODELS_CONFIG.length === 0) {
+          console.warn('No GLB models configured to load');
+          return;
+        }
+        
+        try {
+          const loader = new PLYModelLoader();
+          
+          const assignedConfigs = PLY_MODELS_CONFIG.filter(config => 
+            config.projectId === this.projectId
+          );
+          
+          const unassignedConfigs = PLY_MODELS_CONFIG.filter(config => 
+            !config.projectId
+          );
+          
+          if (assignedConfigs.length > 0) {
+            const assignedModels = await Promise.all(
+              assignedConfigs.map(config => loader.loadModel(config))
+            );
+            
+            assignedModels.forEach(model => {
+              model.scale.multiplyScalar(1.3);
+              
+              this.plyModels.push(model);
+              this.scene.add(model);
+              console.log(`Added modal model: ${model.userData.title}`);
+            });
+          }
+          
+          if (unassignedConfigs.length > 0 && this.projectId === '1') {
+            const unassignedModels = await Promise.all(
+              unassignedConfigs.map(config => loader.loadModel(config))
+            );
+            
+            unassignedModels.forEach(model => {
+              model.scale.multiplyScalar(1.3);
+              model.position.x += 1;
+              
+              this.plyModels.push(model);
+              this.scene.add(model);
+              console.log(`Added unassigned modal model: ${model.userData.title}`);
+            });
+          }
+        } catch (error) {
+          console.error('Error loading GLB models in ModalSceneManager:', error);
+        }
+      }
+
+      animate() {
+        this.animationId = requestAnimationFrame(this.animate.bind(this));
+        
+        this.plyModels.forEach(model => {
+          const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
+          
+          this.targetRotation.y = initialRotation.y + this.mouse.x * 0.8;
+          this.targetRotation.x = initialRotation.x + this.mouse.y * 0.8;
+          
+          model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.03;
+          model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.03;
+        });
+        
+        this.renderer.render(this.scene, this.camera);
+      }
+    }
+
+    // ===== Project Manager =====
+    class ProjectManager {
+      constructor() {
+        this.scenes = new Map();
+        this.modalScene = null;
+        this.currentProject = null;
+        this.modal = document.getElementById('project-modal');
+        this.modalCanvas = document.getElementById('modal-canvas');
+        this.modalClose = document.querySelector('.modal-close');
+        
+        this.init();
+      }
+
+      init() {
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(card => {
+          const projectId = card.dataset.project;
+          const canvas = card.querySelector('.project-canvas');
+          
+          if (canvas) {
+            const scene = new SceneManager(canvas, projectId);
+            this.scenes.set(projectId, scene);
+          }
+          
+          const expandBtn = card.querySelector('.project-expand');
+          if (expandBtn) {
+            expandBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              this.openModal(projectId, card);
+            });
+          }
+          
+          card.addEventListener('click', () => {
+            this.openModal(projectId, card);
+          });
+        });
+        
+        if (this.modalClose) {
+          this.modalClose.addEventListener('click', () => {
+            this.closeModal();
+          });
+        }
+        
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.closeModal();
+          }
+        });
+        
+        window.addEventListener('resize', () => {
+          this.handleResize();
+        });
+      }
+
+      openModal(projectId, card) {
+        this.currentProject = projectId;
+        
+        const title = card.querySelector('.project-title').textContent;
+        const description = card.querySelector('.project-description').textContent;
+        const number = card.querySelector('.project-number').textContent;
+        const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent);
+        
+        document.querySelector('.modal-number').textContent = number;
+        document.querySelector('.modal-title').textContent = title;
+        document.querySelector('.modal-description').textContent = description;
+        
+        const modalTagsContainer = document.querySelector('.modal-tags');
+        modalTagsContainer.innerHTML = tags.map(tag => 
+          `<span class="tag">${tag}</span>`
+        ).join('');
+        
+        if (this.modalScene) {
+          this.modalScene.dispose();
+        }
+        this.modalScene = new ModalSceneManager(this.modalCanvas, projectId);
+        
+        this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+          if (this.modalScene) {
+            this.modalScene.handleResize();
+          }
+        }, 100);
+      }
+
+      closeModal() {
+        this.modal.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        if (this.modalScene) {
+          this.modalScene.dispose();
+          this.modalScene = null;
+        }
+        
+        this.currentProject = null;
+      }
+
+      handleResize() {
+        this.scenes.forEach(scene => {
+          scene.handleResize();
+        });
+        
+        if (this.modalScene) {
+          this.modalScene.handleResize();
+        }
+      }
+    }
+
+    // ===== Initialize About Section =====
+    function initAboutSection(heroTextScene) {
+      const aboutSection = document.getElementById('about');
+      const aboutLink = document.getElementById('about-link');
+      const aboutClose = document.querySelector('.about-close');
+      const aboutCanvas = document.getElementById('about-canvas');
+      let aboutTreeScene = null;
+      
+      function openAbout() {
+        aboutSection.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        if (!aboutTreeScene && aboutCanvas) {
+          aboutTreeScene = new HeroTextScene(aboutCanvas);
+          
+          aboutTreeScene.handleResize = function() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
+
+            this.renderer.setSize(width, height);
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          };
+          
+          setTimeout(() => {
+            if (aboutTreeScene) {
+              const width = window.innerWidth;
+              const height = window.innerHeight;
+              
+              aboutTreeScene.camera.aspect = width / height;
+              aboutTreeScene.camera.updateProjectionMatrix();
+              
+              aboutTreeScene.camera.position.set(0, 0, 20);
+              
+              aboutTreeScene.renderer.setSize(width, height);
+              aboutTreeScene.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            }
+          }, 100);
+        }
+      }
+      
+      function closeAbout() {
+        aboutSection.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        if (aboutTreeScene) {
+          aboutTreeScene.dispose();
+          aboutTreeScene = null;
+        }
+      }
+      
+      if (aboutLink) {
+        aboutLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          openAbout();
+        });
+      }
+      
+      if (aboutClose) {
+        aboutClose.addEventListener('click', () => {
+          closeAbout();
+        });
+      }
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && aboutSection.classList.contains('active')) {
+          closeAbout();
+        }
+      });
+      
+      if (aboutSection) {
+        aboutSection.addEventListener('click', (e) => {
+          if (e.target === aboutSection) {
+            closeAbout();
+          }
+        });
+      }
+    }
+
+    // ===== Main Init =====
+    function init() {
+      new TextHoverAnimation('.nav-link', {
+        duration: 700,
+        stagger: 40,
+        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+        direction: 'up'
+      });
+      
+      const lenis = initLenis();
+      
+      initScrollAnimations();
+      
+      const heroCanvas = document.getElementById('hero-canvas');
+      let heroTextScene = null;
+      
+      if (heroCanvas) {
+        heroTextScene = new HeroTextScene(heroCanvas);
+      }
+      
+      initHeroScrollAnimation(lenis, heroTextScene);
+      
+      const horizontalScrollContainer = document.querySelector('.horizontal-scroll-container');
+      let horizontalScene = null;
+      
+      if (horizontalScrollContainer) {
+        horizontalScene = new HorizontalScrollScene(horizontalScrollContainer);
+        initHorizontalScrollAnimation(lenis, horizontalScene);
+        
+        window.addEventListener('resize', () => {
+          if (horizontalScene) {
+            horizontalScene.handleResize();
+          }
+        });
+      }
+      
+      const projectManager = new ProjectManager();
+      
+      initAboutSection(heroTextScene);
+      
+      window.addEventListener('load', () => {
+        document.body.classList.add('loaded');
+      });
+      
+      console.log('Portfolio initialized');
+    }
+
+    // Start the app
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
 </body>
 </html>
