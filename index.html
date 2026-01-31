@@ -1159,6 +1159,11 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import Lenis from '@studio-freight/lenis';
 
+    // Detect base URL for GitHub Pages or local development
+    const BASE_URL = window.location.pathname.includes('/carved_spirits/') 
+      ? '/carved_spirits/' 
+      : '/';
+
     // ===== PLY Model Loader =====
     const PLY_MODELS_CONFIG = [
       {
@@ -1286,7 +1291,7 @@
     class PLYModelLoader {
       constructor() {
         this.loader = new GLTFLoader();
-        this.basePath = import.meta.env.BASE_URL + 'models/';
+        this.basePath = BASE_URL + 'models/';
       }
 
       loadModel(config) {
@@ -1778,7 +1783,7 @@
         const loader = new GLTFLoader();
         
         loader.load(
-          import.meta.env.BASE_URL + 'tree.glb',
+          BASE_URL + 'tree.glb',
           (gltf) => {
             this.treeModel = gltf.scene;
             

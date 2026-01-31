@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+// Base URL for assets (works with GitHub Pages)
+const BASE_URL = import.meta?.env?.BASE_URL || 
+  (window.location.pathname.includes('/carved_spirits/') ? '/carved_spirits/' : '/');
+
 /**
  * Hero Tree Scene Manager
  * Displays tree.glb model spanning across hero section and beyond
@@ -72,7 +76,7 @@ export class HeroTextScene {
     const loader = new GLTFLoader();
     
     loader.load(
-      import.meta.env.BASE_URL + 'tree.glb',
+      BASE_URL + 'tree.glb',
       (gltf) => {
         this.treeModel = gltf.scene;
         
