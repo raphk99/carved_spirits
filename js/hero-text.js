@@ -72,7 +72,7 @@ export class HeroTextScene {
     const loader = new GLTFLoader();
     
     loader.load(
-      '/tree.glb',
+      import.meta.env.BASE_URL + 'tree.glb',
       (gltf) => {
         this.treeModel = gltf.scene;
         

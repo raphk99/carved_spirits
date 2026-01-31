@@ -1286,7 +1286,7 @@
     class PLYModelLoader {
       constructor() {
         this.loader = new GLTFLoader();
-        this.basePath = '/models/';
+        this.basePath = import.meta.env.BASE_URL + 'models/';
       }
 
       loadModel(config) {
@@ -1778,7 +1778,7 @@
         const loader = new GLTFLoader();
         
         loader.load(
-          '/tree.glb',
+          import.meta.env.BASE_URL + 'tree.glb',
           (gltf) => {
             this.treeModel = gltf.scene;
             
