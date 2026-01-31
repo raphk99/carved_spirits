@@ -36,6 +36,9 @@ jobs:
           GITHUB_PAGES: 'true'
         run: npm run build
       
+      - name: Copy public models
+        run: cp -R public/models dist/models
+      
       - name: Add .nojekyll
         run: cp public/.nojekyll dist/ 2>/dev/null || touch dist/.nojekyll
       

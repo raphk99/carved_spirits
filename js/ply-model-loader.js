@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // Base URL for assets (works with GitHub Pages and local dev)
-const BASE_URL = import.meta?.env?.BASE_URL || 
-  (window.location.pathname.includes('/carved_spirits/') ? '/carved_spirits/' : '/');
+const BASE_URL = import.meta?.env?.BASE_URL
+  ? new URL(import.meta.env.BASE_URL, window.location.origin).toString()
+  : new URL('./', document.baseURI).toString();
 
 /**
  * GLB Models Configuration
@@ -151,7 +152,7 @@ export const PLY_MODELS_CONFIG = [
 export class PLYModelLoader {
   constructor() {
     this.loader = new GLTFLoader();
-    this.basePath = BASE_URL + 'models/';
+    this.basePath = new URL('models/', BASE_URL).toString();
   }
 
   /**
