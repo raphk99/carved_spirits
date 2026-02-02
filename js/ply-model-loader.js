@@ -152,7 +152,7 @@ export const PLY_MODELS_CONFIG = [
 export class PLYModelLoader {
   constructor() {
     this.loader = new GLTFLoader();
-    this.basePath = new URL('public/models/', BASE_URL).toString();
+    this.basePath = new URL('models/', BASE_URL).toString();
   }
 
   /**
