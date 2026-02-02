@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PLYModelLoader, PLY_MODELS_CONFIG } from './ply-model-loader.js';
+import { MobileControls } from './mobile-controls.js';
 
 /**
  * Three.js Scene Manager
@@ -17,6 +18,8 @@ export class SceneManager {
     this.mouse = new THREE.Vector2();
     this.targetRotation = new THREE.Euler();
     this.isHovered = false;
+    this.mobileControls = null; // Mobile controls instance
+    this.isMobile = MobileControls.isMobile();
     
     this.init();
   }
@@ -55,10 +58,12 @@ export class SceneManager {
     // Load GLB models (geometric shapes removed - models only)
     this.loadPLYModels();
     
-    // Event listeners
-    this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-    this.canvas.addEventListener('mouseenter', () => this.isHovered = true);
-    this.canvas.addEventListener('mouseleave', () => this.isHovered = false);
+    // Event listeners - only add mouse listeners on desktop
+    if (!this.isMobile) {
+      this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+      this.canvas.addEventListener('mouseenter', () => this.isHovered = true);
+      this.canvas.addEventListener('mouseleave', () => this.isHovered = false);
+    }
     
     // Start animation
     this.animate();
@@ -119,6 +124,14 @@ export class SceneManager {
           console.log(`Added unassigned model: ${model.userData.title}`);
         });
       }
+      
+      // Initialize mobile controls if on mobile device
+      if (this.isMobile && this.plyModels.length > 0) {
+        this.mobileControls = new MobileControls(this.canvas, this.camera, this.plyModels, {
+          showToggle: false, // No toggle for project cards
+          initialMode: 'touch'
+        });
+      }
     } catch (error) {
       console.error('Error loading GLB models in SceneManager:', error);
     }
@@ -133,20 +146,25 @@ export class SceneManager {
   animate() {
     this.animationId = requestAnimationFrame(this.animate.bind(this));
     
-    // Animate GLB models - ONLY with mouse interaction, no auto-rotation
-    this.plyModels.forEach(model => {
-      // Interactive rotation based on mouse ONLY
-      if (this.isHovered) {
-        // Get the model's initial rotation from config
-        const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
-        
-        this.targetRotation.y = initialRotation.y + this.mouse.x * 0.5;
-        this.targetRotation.x = initialRotation.x + this.mouse.y * 0.5;
-        
-        model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.05;
-        model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.05;
-      }
-    });
+    // Update mobile controls if on mobile
+    if (this.isMobile && this.mobileControls) {
+      this.mobileControls.update();
+    } else {
+      // Desktop: Animate GLB models - ONLY with mouse interaction, no auto-rotation
+      this.plyModels.forEach(model => {
+        // Interactive rotation based on mouse ONLY
+        if (this.isHovered) {
+          // Get the model's initial rotation from config
+          const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
+          
+          this.targetRotation.y = initialRotation.y + this.mouse.x * 0.5;
+          this.targetRotation.x = initialRotation.x + this.mouse.y * 0.5;
+          
+          model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.05;
+          model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.05;
+        }
+      });
+    }
     
     this.renderer.render(this.scene, this.camera);
   }
@@ -165,6 +183,12 @@ export class SceneManager {
   dispose() {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
+    }
+    
+    // Dispose mobile controls
+    if (this.mobileControls) {
+      this.mobileControls.dispose();
+      this.mobileControls = null;
     }
     
     // Dispose GLB models
@@ -187,7 +211,9 @@ export class SceneManager {
       this.renderer.dispose();
     }
     
-    this.canvas.removeEventListener('mousemove', this.onMouseMove);
+    if (!this.isMobile) {
+      this.canvas.removeEventListener('mousemove', this.onMouseMove);
+    }
   }
 }
 
@@ -195,7 +221,7 @@ export class SceneManager {
  * Modal Scene Manager for expanded view
  */
 export class ModalSceneManager extends SceneManager {
-  constructor(canvas, projectId) {
+  constructor(canvas, projectId, options = {}) {
     super(canvas, projectId);
     this.isExpanded = true;
   }
@@ -256,6 +282,14 @@ export class ModalSceneManager extends SceneManager {
           console.log(`Added unassigned modal model: ${model.userData.title}`);
         });
       }
+      
+      // Initialize mobile controls for modal if on mobile device
+      if (this.isMobile && this.plyModels.length > 0) {
+        this.mobileControls = new MobileControls(this.canvas, this.camera, this.plyModels, {
+          showToggle: false, // No toggle for now
+          initialMode: 'touch'
+        });
+      }
     } catch (error) {
       console.error('Error loading GLB models in ModalSceneManager:', error);
     }
@@ -271,17 +305,22 @@ export class ModalSceneManager extends SceneManager {
   animate() {
     this.animationId = requestAnimationFrame(this.animate.bind(this));
     
-    // Animate GLB models - with mouse interaction and smoother interpolation for modal
-    this.plyModels.forEach(model => {
-      // Interactive rotation with smoother interpolation for modal
-      const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
-      
-      this.targetRotation.y = initialRotation.y + this.mouse.x * 0.8;
-      this.targetRotation.x = initialRotation.x + this.mouse.y * 0.8;
-      
-      model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.03;
-      model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.03;
-    });
+    // Update mobile controls if on mobile
+    if (this.isMobile && this.mobileControls) {
+      this.mobileControls.update();
+    } else {
+      // Desktop: Animate GLB models - with mouse interaction and smoother interpolation for modal
+      this.plyModels.forEach(model => {
+        // Interactive rotation with smoother interpolation for modal
+        const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
+        
+        this.targetRotation.y = initialRotation.y + this.mouse.x * 0.8;
+        this.targetRotation.x = initialRotation.x + this.mouse.y * 0.8;
+        
+        model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.03;
+        model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.03;
+      });
+    }
     
     this.renderer.render(this.scene, this.camera);
   }

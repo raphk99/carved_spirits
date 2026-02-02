@@ -302,6 +302,32 @@
       cursor: pointer;
     }
 
+    .project-card.description-expanded {
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border) transparent;
+    }
+
+    /* Custom scrollbar for expanded project cards - Webkit browsers */
+    .project-card.description-expanded::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .project-card.description-expanded::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .project-card.description-expanded::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 2px;
+    }
+
+    .project-card.description-expanded::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
     .project-card:hover {
       border-color: rgba(255, 255, 255, 0.2);
     }
@@ -333,6 +359,38 @@
       color: var(--color-text-muted);
       margin-bottom: var(--spacing-md);
       line-height: 1.6;
+      overflow: hidden;
+      transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+
+    .project-description.truncated {
+      max-height: 2.8em;
+    }
+
+    .description-wrapper {
+      overflow: hidden;
+      transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .description-wrapper.expanded {
+      max-height: none !important;
+    }
+
+    .see-more-toggle {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: color var(--transition-fast);
+      display: inline;
+      font-weight: 400;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      line-height: 1.6;
+      pointer-events: auto;
+    }
+
+    .see-more-toggle:hover {
+      color: var(--color-accent);
     }
 
     .project-tags {
@@ -429,6 +487,106 @@
       display: block;
     }
 
+    /* Gyroscope Toggle Button */
+    .gyro-toggle {
+      position: absolute;
+      bottom: var(--spacing-md);
+      right: var(--spacing-md);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      z-index: 1000;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .gyro-toggle:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .gyro-toggle:active {
+      transform: scale(0.95);
+    }
+
+    .gyro-icon-touch,
+    .gyro-icon-gyro {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity var(--transition-fast);
+    }
+
+    /* Hide toggle on desktop */
+    @media (min-width: 1025px) {
+      .gyro-toggle {
+        display: none !important;
+      }
+    }
+
+    /* Mobile Hint Overlay */
+    .mobile-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 999;
+      pointer-events: none;
+      animation: fadeInOut 3s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      10% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+    }
+
+    .mobile-hint-text {
+      color: var(--color-text);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Hide hint on desktop */
+    @media (min-width: 1025px) {
+      .mobile-hint {
+        display: none !important;
+      }
+    }
+
     .modal-close {
       position: absolute;
       top: var(--spacing-md);
@@ -462,11 +620,54 @@
 
     .modal-info {
       width: 400px;
-      padding: var(--spacing-xl) var(--spacing-lg);
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       border-left: 1px solid var(--color-border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-header {
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      background-color: var(--color-bg);
+      padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
+      z-index: 10;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    .modal-info.scrolled .modal-header {
+      border-bottom-color: var(--color-border);
+    }
+
+    .modal-description-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+      min-height: 0;
+      padding: 0 var(--spacing-lg) var(--spacing-xl) var(--spacing-lg);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Custom scrollbar for modal description */
+    .modal-description-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal-description-wrapper::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .modal-description-wrapper::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 3px;
+    }
+
+    .modal-description-wrapper::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
 
     .modal-number {
@@ -479,20 +680,21 @@
     .modal-title {
       font-size: 2.5rem;
       font-weight: 300;
-      margin-bottom: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.2;
     }
 
     .modal-description {
       font-size: 1rem;
       color: var(--color-text-muted);
       line-height: 1.8;
-      margin-bottom: var(--spacing-lg);
     }
 
     .modal-tags {
       display: flex;
       gap: var(--spacing-xs);
       flex-wrap: wrap;
+      margin-bottom: 0;
     }
 
     /* About Section */
@@ -776,11 +978,34 @@
       .project-modal {
         flex-direction: column;
       }
+
+      .modal-canvas-container {
+        max-height: 50vh;
+        min-height: 300px;
+      }
       
       .modal-info {
         width: 100%;
+        height: 50vh;
+        max-height: 50vh;
         border-left: none;
         border-top: 1px solid var(--color-border);
+      }
+
+      .modal-header {
+        padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm) var(--spacing-md);
+      }
+
+      .modal-description-wrapper {
+        padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
+      }
+
+      .modal-title {
+        font-size: 2rem;
+      }
+
+      .modal-description {
+        font-size: 0.9375rem;
       }
       
       .footer-links {
@@ -816,6 +1041,22 @@
       
       .project-card {
         padding: var(--spacing-sm);
+      }
+
+      .modal-header {
+        padding: var(--spacing-sm) var(--spacing-sm) 0.5rem var(--spacing-sm);
+      }
+
+      .modal-description-wrapper {
+        padding: 0 var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
+      }
+
+      .modal-title {
+        font-size: 1.75rem;
+      }
+
+      .modal-description {
+        font-size: 0.875rem;
       }
     }
   </style>
@@ -867,11 +1108,12 @@
         <article class="project-card" data-project="1" data-scroll-animate>
           <div class="project-number">01</div>
           <div class="project-content">
-            <h3 class="project-title">Geometric Dreams</h3>
-            <p class="project-description">Abstract 3D composition exploring form and space</p>
+            <h3 class="project-title">Bekom Mask</h3>
+            <p class="project-description">This specific mask comes from the highlands of Western Cameroon, specifically from the Bekom chiefdom. People call this one a "cap mask" because of the way it’s worn, it sits horizontally on the head and doesn't even have eyeholes. It’s pretty unique. Its whole purpose is tied to various traditional ceremonies, especially the ones focused on fertility and honoring the original ancestors who started everything. It’s their way of staying connected to where they came from.</p>
             <div class="project-tags">
-              <span class="tag">3D Design</span>
-              <span class="tag">Abstract</span>
+              <span class="tag">Cameroon</span>
+              <span class="tag">Bamileke</span>
+              <span class="tag">Bekom</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="1">
@@ -905,11 +1147,16 @@
         <article class="project-card" data-project="3" data-scroll-animate>
           <div class="project-number">03</div>
           <div class="project-content">
-            <h3 class="project-title">Minimal Essence</h3>
-            <p class="project-description">Reductionist approach to 3D visualization</p>
+            <h3 class="project-title">Songye Mask</h3>
+            <p class="project-description">The kifwebe cult gets its name from the Songye word for "mask." It started around the turn of the last century, mainly to keep some social order. These masks vary a lot in shape and color depending on who they’re supposed to be, and they show up everywhere—from funerals and secret society initiations to healing rituals and warding off enemies.
+
+              You can usually tell the difference between the spirits they represent. Male masks (kilume) have these high crests for wisdom and are covered in red, black, and white stripes. They’re meant to be the dominant ones who enforce the rules. Female masks (kikashi) are usually white, which connects them to the moon, and they’re often larger with no crest at all. They represent balance and kindness, and you can sometimes see surface scratches that look like scarification.
+              
+              Even though all the dancers are men, they use these different styles to play out different roles. In Luba traditions, the fertility dances happen during the new moon, often alongside mankishi figures. Most masks have holes along the edges for long fiber beards, but if those holes are missing, they’re called Kabemba, or "hawks." It’s a whole system of symbols just to tell a story or keep the peace.</p>
             <div class="project-tags">
-              <span class="tag">Minimalism</span>
-              <span class="tag">Visual</span>
+              <span class="tag">DR Congo</span>
+              <span class="tag">Songye</span>
+              <span class="tag">Luba</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="3">
@@ -924,11 +1171,11 @@
         <article class="project-card" data-project="4" data-scroll-animate>
           <div class="project-number">04</div>
           <div class="project-content">
-            <h3 class="project-title">Digital Sculpture</h3>
-            <p class="project-description">Contemporary digital art meets traditional form</p>
+            <h3 class="project-title">Ngbaka Mask</h3>
+            <p class="project-description">This one, from the Ngbaka people of the Ubangi region, in the North of DR Congo. It’s almost certainly tied to an initiation rituals, mostly as a way of showing that someone actually finished the whole thing.</p>
             <div class="project-tags">
-              <span class="tag">Sculpture</span>
-              <span class="tag">Digital Art</span>
+              <span class="tag">DR Congo</span>
+              <span class="tag">Ngbaka</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="4">
@@ -963,12 +1210,15 @@
         <article class="project-card" data-project="6" data-scroll-animate>
           <div class="project-number">06</div>
           <div class="project-content">
-            <h3 class="project-title">Cubic Structure</h3>
-            <p class="project-description">Exploring geometric fundamentals and spatial relationships</p>
+            <h3 class="project-title">Ogbodo enyi Mask</h3>
+            <p class="project-description">In Southeast Nigeria, the Igbo people have created a huge, diverse variety of masks. Like most places in Africa, wearing them is strictly for the men. But there was this one time in 1975, in the village of Izzi, where an oracle actually suggested a woman should wear a mask like this several times a year to stop a tragic wave of infant deaths.
+
+              This one is an elephant spirit. There’s a human head called an ntekpe popping out of the back, which marks it as either a "child of the spirit" or the spirit of a notable person. When these masks come out, it’s a sign that the ancestors are present—and they’re the ones responsible for the well-being of the living. Unlike most masks that move in packs, the ogbodo enyi performs solo, following a hierarchy based on age.
+              
+              It mixes human and elephant features and usually shows up during the dry season when the community has been purified and the paths are clear. It also makes an appearance at funerals for members of the specific age group it represents. Originally, the Ogbodo enyi character was pretty violent, roaming the village in a massive raffia robe and shouting threats. Nowadays, it’s much more benevolent, visiting the community to receive prayers and offerings. Some people also call these striking pieces "Wawa" masks.</p>
             <div class="project-tags">
-              <span class="tag">Geometry</span>
-              <span class="tag">Minimal</span>
-              <span class="tag">Architecture</span>
+              <span class="tag">Nigeria</span>
+              <span class="tag">Igbo</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="6">
@@ -1003,12 +1253,12 @@
         <article class="project-card" data-project="8" data-scroll-animate>
           <div class="project-number">08</div>
           <div class="project-content">
-            <h3 class="project-title">Citrus Study</h3>
-            <p class="project-description">Photorealistic texturing and natural form capture</p>
+            <h3 class="project-title">Pende Gikhoko Pendant</h3>
+            <p class="project-description">Back in the day, if you were a "somebody"—like the son of a chief or a big-shot notable—you’d get one of these after finishing the mukanda rites. It’s a whole initiation thing. Along with the pendant, you’d get a givule, which is supposed to be a piece of an ancestor’s soul.
+              They carved them out of bone or ivory to show that these kids were finally men, inheriting all this spiritual and political weight.</p>
             <div class="project-tags">
-              <span class="tag">Photorealism</span>
-              <span class="tag">Nature</span>
-              <span class="tag">Texture</span>
+              <span class="tag">DR Congo</span>
+              <span class="tag">Pende</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="8">
@@ -1043,12 +1293,11 @@
         <article class="project-card" data-project="10" data-scroll-animate>
           <div class="project-number">10</div>
           <div class="project-content">
-            <h3 class="project-title">Chromatic Grid</h3>
-            <p class="project-description">Color theory application in geometric composition</p>
+            <h3 class="project-title">Nsembu Mask</h3>
+            <p class="project-description">A culturally important ritual for the Kumu people is the circumcision of boys as they enter adulthood.  The nsembu mask is used exclusively by members of the Nkunda Secret Society for the purposes of adult initiation. They also use the mask for divination under the effects of hallucinogens.  The mask itself represents the diviner’s spirit.  Kumu masks are somewhat rare, but the known examples tend to have wide open eyes and mouths, frequently with sharp teeth.</p>
             <div class="project-tags">
-              <span class="tag">Color</span>
-              <span class="tag">Grid</span>
-              <span class="tag">Abstract</span>
+              <span class="tag">DR Congo</span>
+              <span class="tag">Kumu</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="10">
@@ -1063,12 +1312,12 @@
         <article class="project-card" data-project="11" data-scroll-animate>
           <div class="project-number">11</div>
           <div class="project-content">
-            <h3 class="project-title">Monochrome Composition</h3>
-            <p class="project-description">Study in grayscale and form without color distraction</p>
+            <h3 class="project-title">Salampasu Mask</h3>
+            <p class="project-description">These masks really come out for the initiation rites. For the big event, they set up a wooden stage with panels that have these carvings of people on them. The faces on those panels use the exact same design as the masks, which is a pretty cool touch. You see that same look on a few rare painted statues too.
+              Also, the Salampasu people are incredibly talented when it comes to metalwork. They’re basically master blacksmiths, and they really know how to handle a forge. It’s one of those things they’re just naturally great at.</p>
             <div class="project-tags">
-              <span class="tag">Monochrome</span>
-              <span class="tag">Minimal</span>
-              <span class="tag">Study</span>
+              <span class="tag">DR Congo</span>
+              <span class="tag">Salampasu</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="11">
@@ -1083,12 +1332,14 @@
         <article class="project-card" data-project="12" data-scroll-animate>
           <div class="project-number">12</div>
           <div class="project-content">
-            <h3 class="project-title">Portrait Study</h3>
-            <p class="project-description">Character modeling and facial feature exploration</p>
+            <h3 class="project-title">Muminia Mask</h3>
+            <p class="project-description">The Lega people originally came from Uganda further to the Northeast, and they were likely the first ones to settle in the Umaniema region of the Congo. Their whole political and religious world is run by the Bwami association. It’s pretty specific to them, even though you see similar groups with different names in other nearby tribes.
+
+              This particular mask is a muminia type. Each community only ever had one of them, which is a big deal. For any initiation to any grade to actually happen, the muminia had to be there. It’s the mask they use for the very first Bwami initiation, and it represents a bit of a contradiction—it stands for a high-ranking, powerful member of the association, but also a troublemaker. It’s got a bit of both in it.</p>
             <div class="project-tags">
-              <span class="tag">Portrait</span>
-              <span class="tag">Character</span>
-              <span class="tag">Study</span>
+              <span class="tag">DR Congo</span>
+              <span class="tag">Lega</span>
+              <span class="tag">Bwami</span>
             </div>
           </div>
           <div class="project-3d-container" data-3d-target="12">
@@ -1132,12 +1383,19 @@
     </button>
     <div class="modal-canvas-container">
       <canvas class="modal-canvas" id="modal-canvas"></canvas>
+      <div class="mobile-hint" id="mobile-hint" style="display: none;">
+        <p class="mobile-hint-text">Swipe to rotate</p>
+      </div>
     </div>
     <div class="modal-info">
-      <div class="modal-number"></div>
-      <h2 class="modal-title"></h2>
-      <p class="modal-description"></p>
-      <div class="modal-tags"></div>
+      <div class="modal-header">
+        <div class="modal-number"></div>
+        <h2 class="modal-title"></h2>
+        <div class="modal-tags"></div>
+      </div>
+      <div class="modal-description-wrapper">
+        <p class="modal-description"></p>
+      </div>
     </div>
   </div>
 
@@ -1158,6 +1416,7 @@
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import Lenis from '@studio-freight/lenis';
+    import { SceneManager, ModalSceneManager } from './js/three-scene.js';
 
     // Detect base URL for GitHub Pages or local development
     const BASE_URL = window.location.pathname.includes('/carved_spirits/') 
@@ -2091,241 +2350,6 @@
       }
     }
 
-    // ===== Scene Manager =====
-    class SceneManager {
-      constructor(canvas, projectId) {
-        this.canvas = canvas;
-        this.projectId = projectId;
-        this.scene = null;
-        this.camera = null;
-        this.renderer = null;
-        this.mesh = null;
-        this.plyModels = [];
-        this.animationId = null;
-        this.mouse = new THREE.Vector2();
-        this.targetRotation = new THREE.Euler();
-        this.isHovered = false;
-        
-        this.init();
-      }
-
-      init() {
-        this.scene = new THREE.Scene();
-        
-        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
-        this.camera.position.z = 5;
-        
-        this.renderer = new THREE.WebGLRenderer({
-          canvas: this.canvas,
-          alpha: true,
-          antialias: true,
-        });
-        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.setClearColor(0x000000, 0);
-        
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-        this.scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 5, 5);
-        this.scene.add(directionalLight);
-        
-        const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
-        backLight.position.set(-5, -5, -5);
-        this.scene.add(backLight);
-        
-        this.loadPLYModels();
-        
-        this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        this.canvas.addEventListener('mouseenter', () => this.isHovered = true);
-        this.canvas.addEventListener('mouseleave', () => this.isHovered = false);
-        
-        this.animate();
-      }
-
-      async loadPLYModels() {
-        if (PLY_MODELS_CONFIG.length === 0) {
-          console.warn('No GLB models configured to load');
-          return;
-        }
-        
-        try {
-          const loader = new PLYModelLoader();
-          
-          const assignedConfigs = PLY_MODELS_CONFIG.filter(config => 
-            config.projectId === this.projectId
-          );
-          
-          const unassignedConfigs = PLY_MODELS_CONFIG.filter(config => 
-            !config.projectId
-          );
-          
-          if (assignedConfigs.length > 0) {
-            const assignedModels = await Promise.all(
-              assignedConfigs.map(config => loader.loadModel(config))
-            );
-            
-            assignedModels.forEach(model => {
-              this.plyModels.push(model);
-              this.scene.add(model);
-              console.log(`Added model: ${model.userData.title}`);
-            });
-          }
-          
-          if (unassignedConfigs.length > 0 && this.projectId === '1') {
-            const unassignedModels = await Promise.all(
-              unassignedConfigs.map(config => loader.loadModel(config))
-            );
-            
-            unassignedModels.forEach(model => {
-              this.plyModels.push(model);
-              this.scene.add(model);
-              console.log(`Added unassigned model: ${model.userData.title}`);
-            });
-          }
-        } catch (error) {
-          console.error('Error loading GLB models in SceneManager:', error);
-        }
-      }
-
-      onMouseMove(event) {
-        const rect = this.canvas.getBoundingClientRect();
-        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      }
-
-      animate() {
-        this.animationId = requestAnimationFrame(this.animate.bind(this));
-        
-        this.plyModels.forEach(model => {
-          if (this.isHovered) {
-            const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
-            
-            this.targetRotation.y = initialRotation.y + this.mouse.x * 0.5;
-            this.targetRotation.x = initialRotation.x + this.mouse.y * 0.5;
-            
-            model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.05;
-            model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.05;
-          }
-        });
-        
-        this.renderer.render(this.scene, this.camera);
-      }
-
-      handleResize() {
-        const width = this.canvas.clientWidth;
-        const height = this.canvas.clientHeight;
-        
-        this.camera.aspect = width / height;
-        this.camera.updateProjectionMatrix();
-        
-        this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      }
-
-      dispose() {
-        if (this.animationId) {
-          cancelAnimationFrame(this.animationId);
-        }
-        
-        this.plyModels.forEach(model => {
-          model.traverse((child) => {
-            if (child.geometry) child.geometry.dispose();
-            if (child.material) {
-              if (Array.isArray(child.material)) {
-                child.material.forEach(mat => mat.dispose());
-              } else {
-                child.material.dispose();
-              }
-            }
-          });
-          this.scene.remove(model);
-        });
-        this.plyModels = [];
-        
-        if (this.renderer) {
-          this.renderer.dispose();
-        }
-        
-        this.canvas.removeEventListener('mousemove', this.onMouseMove);
-      }
-    }
-
-    class ModalSceneManager extends SceneManager {
-      constructor(canvas, projectId) {
-        super(canvas, projectId);
-        this.isExpanded = true;
-      }
-
-      async loadPLYModels() {
-        if (PLY_MODELS_CONFIG.length === 0) {
-          console.warn('No GLB models configured to load');
-          return;
-        }
-        
-        try {
-          const loader = new PLYModelLoader();
-          
-          const assignedConfigs = PLY_MODELS_CONFIG.filter(config => 
-            config.projectId === this.projectId
-          );
-          
-          const unassignedConfigs = PLY_MODELS_CONFIG.filter(config => 
-            !config.projectId
-          );
-          
-          if (assignedConfigs.length > 0) {
-            const assignedModels = await Promise.all(
-              assignedConfigs.map(config => loader.loadModel(config))
-            );
-            
-            assignedModels.forEach(model => {
-              model.scale.multiplyScalar(1.3);
-              
-              this.plyModels.push(model);
-              this.scene.add(model);
-              console.log(`Added modal model: ${model.userData.title}`);
-            });
-          }
-          
-          if (unassignedConfigs.length > 0 && this.projectId === '1') {
-            const unassignedModels = await Promise.all(
-              unassignedConfigs.map(config => loader.loadModel(config))
-            );
-            
-            unassignedModels.forEach(model => {
-              model.scale.multiplyScalar(1.3);
-              model.position.x += 1;
-              
-              this.plyModels.push(model);
-              this.scene.add(model);
-              console.log(`Added unassigned modal model: ${model.userData.title}`);
-            });
-          }
-        } catch (error) {
-          console.error('Error loading GLB models in ModalSceneManager:', error);
-        }
-      }
-
-      animate() {
-        this.animationId = requestAnimationFrame(this.animate.bind(this));
-        
-        this.plyModels.forEach(model => {
-          const initialRotation = model.userData.plyConfig?.rotation || { x: 0, y: 0, z: 0 };
-          
-          this.targetRotation.y = initialRotation.y + this.mouse.x * 0.8;
-          this.targetRotation.x = initialRotation.x + this.mouse.y * 0.8;
-          
-          model.rotation.y += (this.targetRotation.y - model.rotation.y) * 0.03;
-          model.rotation.x += (this.targetRotation.x - model.rotation.x) * 0.03;
-        });
-        
-        this.renderer.render(this.scene, this.camera);
-      }
-    }
-
     // ===== Project Manager =====
     class ProjectManager {
       constructor() {
@@ -2384,7 +2408,9 @@
         this.currentProject = projectId;
         
         const title = card.querySelector('.project-title').textContent;
-        const description = card.querySelector('.project-description').textContent;
+        const descriptionEl = card.querySelector('.project-description');
+        // Get the full text if it exists, otherwise use the regular text
+        const description = descriptionEl.getAttribute('data-full-text') || descriptionEl.textContent;
         const number = card.querySelector('.project-number').textContent;
         const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent);
         
@@ -2405,6 +2431,26 @@
         this.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
+        // Show mobile hint on first visit (mobile only)
+        this.showMobileHint();
+        
+        // Add scroll listener for sticky header border effect
+        const modalInfo = document.querySelector('.modal-info');
+        const descriptionWrapper = document.querySelector('.modal-description-wrapper');
+        
+        if (descriptionWrapper) {
+          const handleScroll = () => {
+            if (descriptionWrapper.scrollTop > 0) {
+              modalInfo.classList.add('scrolled');
+            } else {
+              modalInfo.classList.remove('scrolled');
+            }
+          };
+          
+          descriptionWrapper.addEventListener('scroll', handleScroll);
+          this.modalScrollHandler = handleScroll;
+        }
+        
         setTimeout(() => {
           if (this.modalScene) {
             this.modalScene.handleResize();
@@ -2412,9 +2458,46 @@
         }, 100);
       }
 
+      showMobileHint() {
+        // Only show on mobile devices
+        const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) 
+          && window.innerWidth <= 1024;
+        
+        if (!isMobile) return;
+        
+        // Check if user has seen the hint before
+        const hasSeenHint = localStorage.getItem('carved_spirits_mobile_hint_seen');
+        
+        if (!hasSeenHint) {
+          const hintEl = document.getElementById('mobile-hint');
+          if (hintEl) {
+            hintEl.style.display = 'block';
+            
+            // Mark as seen after showing
+            setTimeout(() => {
+              localStorage.setItem('carved_spirits_mobile_hint_seen', 'true');
+              hintEl.style.display = 'none';
+            }, 3000);
+          }
+        }
+      }
+
       closeModal() {
         this.modal.classList.remove('active');
         document.body.style.overflow = '';
+        
+        // Remove scroll listener
+        const descriptionWrapper = document.querySelector('.modal-description-wrapper');
+        if (descriptionWrapper && this.modalScrollHandler) {
+          descriptionWrapper.removeEventListener('scroll', this.modalScrollHandler);
+          this.modalScrollHandler = null;
+        }
+        
+        // Remove scrolled class
+        const modalInfo = document.querySelector('.modal-info');
+        if (modalInfo) {
+          modalInfo.classList.remove('scrolled');
+        }
         
         if (this.modalScene) {
           this.modalScene.dispose();
@@ -2433,6 +2516,102 @@
           this.modalScene.handleResize();
         }
       }
+    }
+
+    // ===== Initialize Description Truncation =====
+    function initDescriptionTruncation() {
+      const MAX_CHARS = 50;
+      
+      document.querySelectorAll('.project-card').forEach(card => {
+        const descriptionEl = card.querySelector('.project-description');
+        if (!descriptionEl) return;
+        
+        const fullText = descriptionEl.textContent.trim();
+        
+        // Only add see more/less if text exceeds max characters
+        if (fullText.length > MAX_CHARS) {
+          const truncatedText = fullText.substring(0, MAX_CHARS);
+          
+          // Store the full text as a data attribute
+          descriptionEl.setAttribute('data-full-text', fullText);
+          descriptionEl.setAttribute('data-truncated-text', truncatedText);
+          
+          // Create wrapper for smooth height animation
+          const wrapper = document.createElement('div');
+          wrapper.className = 'description-wrapper';
+          
+          // Create content holder
+          const content = document.createElement('span');
+          content.textContent = truncatedText + '... ';
+          
+          // Create see more toggle as inline element
+          const toggleBtn = document.createElement('span');
+          toggleBtn.className = 'see-more-toggle';
+          toggleBtn.textContent = 'see more';
+          
+          // Replace description content
+          descriptionEl.innerHTML = '';
+          wrapper.appendChild(content);
+          wrapper.appendChild(toggleBtn);
+          descriptionEl.appendChild(wrapper);
+          
+          // Measure heights
+          let truncatedHeight = wrapper.scrollHeight;
+          content.textContent = fullText + ' ';
+          let fullHeight = wrapper.scrollHeight;
+          content.textContent = truncatedText + '... ';
+          
+          // Set initial height
+          wrapper.style.maxHeight = truncatedHeight + 'px';
+          
+          let isExpanded = false;
+          
+          // Add click handler
+          toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent card click
+            
+            if (isExpanded) {
+              // Collapse
+              card.classList.remove('description-expanded');
+              wrapper.classList.remove('expanded');
+              wrapper.style.maxHeight = fullHeight + 'px';
+              requestAnimationFrame(() => {
+                wrapper.style.maxHeight = truncatedHeight + 'px';
+              });
+              
+              setTimeout(() => {
+                content.textContent = truncatedText + '... ';
+                toggleBtn.textContent = 'see more';
+                
+                // Remeasure truncated height
+                const newTruncatedHeight = wrapper.scrollHeight;
+                wrapper.style.maxHeight = newTruncatedHeight + 'px';
+              }, 600);
+              
+              isExpanded = false;
+            } else {
+              // Expand
+              const currentHeight = wrapper.scrollHeight;
+              content.textContent = fullText + ' ';
+              const newFullHeight = wrapper.scrollHeight;
+              content.textContent = truncatedText + '... ';
+              
+              wrapper.style.maxHeight = currentHeight + 'px';
+              requestAnimationFrame(() => {
+                content.textContent = fullText + ' ';
+                toggleBtn.textContent = 'see less';
+                // Let the wrapper expand fully, card will handle scrolling
+                wrapper.style.maxHeight = newFullHeight + 'px';
+                wrapper.classList.add('expanded');
+                card.classList.add('description-expanded');
+              });
+              
+              fullHeight = newFullHeight;
+              isExpanded = true;
+            }
+          });
+        }
+      });
     }
 
     // ===== Initialize About Section =====
@@ -2553,6 +2732,8 @@
       }
       
       const projectManager = new ProjectManager();
+      
+      initDescriptionTruncation();
       
       initAboutSection(heroTextScene);
       
