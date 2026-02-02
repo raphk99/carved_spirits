@@ -6,6 +6,11 @@ const BASE_URL = import.meta?.env?.BASE_URL
   ? new URL(import.meta.env.BASE_URL, window.location.origin).toString()
   : new URL('./', document.baseURI).toString();
 
+const MODEL_BASE_PATHS = [
+  new URL('models/', BASE_URL).toString(),
+  new URL('public/models/', BASE_URL).toString(),
+];
+
 /**
  * GLB Models Configuration
  * Add new models here by copying the structure below
@@ -152,7 +157,7 @@ export const PLY_MODELS_CONFIG = [
 export class PLYModelLoader {
   constructor() {
     this.loader = new GLTFLoader();
-    this.basePath = new URL('public/models/', BASE_URL).toString();
+    this.basePaths = MODEL_BASE_PATHS;
   }
 
   /**
@@ -164,24 +169,25 @@ export class PLYModelLoader {
    * @param {Object} config.rotation - Rotation {x, y, z} in radians
    * @returns {Promise<THREE.Group>} - Promise resolving to the loaded object
    */
-  loadModel(config) {
+  loadModel(config, baseIndex = 0) {
     return new Promise((resolve, reject) => {
-      const path = this.basePath + config.filename;
-      
+      const basePath = this.basePaths[baseIndex] || this.basePaths[0];
+      const path = basePath + config.filename;
+
       console.log(`Loading GLB model: ${config.filename}`);
-      
+
       this.loader.load(
         path,
         (gltf) => {
           // Get the scene from the GLTF
           const object = gltf.scene;
-          
+
           // Center the model
           const box = new THREE.Box3().setFromObject(object);
           const center = new THREE.Vector3();
           box.getCenter(center);
           object.position.sub(center);
-          
+
           // GLB files already have materials and colors, so we just need to ensure
           // they're compatible with our lighting setup
           object.traverse((child) => {
@@ -189,12 +195,12 @@ export class PLYModelLoader {
               // Ensure the material casts and receives shadows if needed
               child.castShadow = true;
               child.receiveShadow = true;
-              
+
               // If the material needs adjustment, you can do it here
               // For now, we keep the original materials from the GLB file
             }
           });
-          
+
           // Apply transformations from config
           object.scale.set(config.scale, config.scale, config.scale);
           object.position.set(
@@ -207,14 +213,14 @@ export class PLYModelLoader {
             config.rotation.y,
             config.rotation.z
           );
-          
+
           // Store config in userData for future reference
           object.userData.plyConfig = config;
           object.userData.isPLYModel = true;
           object.userData.title = config.title || config.filename;
           object.userData.subtitle = config.subtitle || '';
           object.userData.tags = config.tags || [];
-          
+
           console.log(`Successfully loaded GLB model: ${config.filename}`);
           resolve(object);
         },
@@ -226,6 +232,15 @@ export class PLYModelLoader {
           }
         },
         (error) => {
+          const nextIndex = baseIndex + 1;
+          if (nextIndex < this.basePaths.length) {
+            console.warn(
+              `Retrying ${config.filename} with fallback base path...`
+            );
+            this.loadModel(config, nextIndex).then(resolve).catch(reject);
+            return;
+          }
+
           console.error(`Error loading GLB model ${config.filename}:`, error);
           reject(error);
         }

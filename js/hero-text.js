@@ -5,6 +5,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 const BASE_URL = import.meta?.env?.BASE_URL || 
   (window.location.pathname.includes('/carved_spirits/') ? '/carved_spirits/' : '/');
 
+const MODEL_BASE_PATHS = [
+  BASE_URL + 'models/',
+  BASE_URL + 'public/models/',
+];
+
 /**
  * Hero Tree Scene Manager
  * Displays tree.glb model spanning across hero section and beyond
@@ -72,11 +77,12 @@ export class HeroTextScene {
     this.animate();
   }
 
-  loadTreeModel() {
+  loadTreeModel(baseIndex = 0) {
     const loader = new GLTFLoader();
-    
+    const basePath = MODEL_BASE_PATHS[baseIndex] || MODEL_BASE_PATHS[0];
+
     loader.load(
-      BASE_URL + 'models/tree.glb',
+      basePath + 'tree.glb',
       (gltf) => {
         this.treeModel = gltf.scene;
         
@@ -117,6 +123,13 @@ export class HeroTextScene {
         console.log('Loading tree model:', (progress.loaded / progress.total * 100) + '%');
       },
       (error) => {
+        const nextIndex = baseIndex + 1;
+        if (nextIndex < MODEL_BASE_PATHS.length) {
+          console.warn('Retrying tree model with fallback base path...');
+          this.loadTreeModel(nextIndex);
+          return;
+        }
+
         console.error('Error loading tree model:', error);
       }
     );
