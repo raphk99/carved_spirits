@@ -44,14 +44,14 @@ export class SceneManager {
     this.renderer.setClearColor(0x000000, 0);
     
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     this.scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
     directionalLight.position.set(5, 5, 5);
     this.scene.add(directionalLight);
     
-    const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    const backLight = new THREE.DirectionalLight(0xffffff, 0.8);
     backLight.position.set(-5, -5, -5);
     this.scene.add(backLight);
     
