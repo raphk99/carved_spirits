@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
   <title>Carved Spirits - Digital Gallery</title>
   <style>
     /* Modern CSS Reset */
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
@@ -24,20 +27,34 @@
       text-rendering: optimizeSpeed;
     }
 
-    img, picture, video, canvas, svg {
+    img,
+    picture,
+    video,
+    canvas,
+    svg {
       display: block;
       max-width: 100%;
     }
 
-    input, button, textarea, select {
+    input,
+    button,
+    textarea,
+    select {
       font: inherit;
     }
 
-    p, h1, h2, h3, h4, h5, h6 {
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       overflow-wrap: break-word;
     }
 
-    ul, ol {
+    ul,
+    ol {
       list-style: none;
     }
 
@@ -59,17 +76,17 @@
       --color-text-muted: #808080;
       --color-accent: #ffffff;
       --color-border: #1a1a1a;
-      
+
       --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
       --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
-      
+
       --spacing-xs: 0.5rem;
       --spacing-sm: 1rem;
       --spacing-md: 2rem;
       --spacing-lg: 4rem;
       --spacing-xl: 6rem;
       --spacing-2xl: 8rem;
-      
+
       --transition-smooth: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       --transition-fast: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -96,7 +113,12 @@
     }
 
     /* Typography */
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       line-height: 1.2;
       font-weight: 400;
       letter-spacing: -0.02em;
@@ -226,6 +248,7 @@
         opacity: 0;
         transform: translateY(20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -257,9 +280,12 @@
     }
 
     @keyframes scrollBounce {
-      0%, 100% {
+
+      0%,
+      100% {
         transform: translateY(0);
       }
+
       50% {
         transform: translateY(10px);
       }
@@ -558,14 +584,17 @@
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.95);
       }
+
       10% {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
       }
+
       80% {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
       }
+
       100% {
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.95);
@@ -724,8 +753,9 @@
       height: 100%;
       position: relative;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .about-canvas {
@@ -743,6 +773,7 @@
       max-width: 800px;
       padding: var(--spacing-xl);
       text-align: center;
+      margin: auto;
     }
 
     .about-text {
@@ -920,20 +951,20 @@
       .hero-content {
         padding: 0 var(--spacing-md);
       }
-      
+
       .hero-title {
         font-size: clamp(3rem, 12vw, 8rem);
       }
-      
+
       .modal-info {
         width: 350px;
         padding: var(--spacing-lg) var(--spacing-md);
       }
-      
+
       .footer-content {
         grid-template-columns: 1fr;
       }
-      
+
       .footer-links {
         gap: var(--spacing-lg);
       }
@@ -945,38 +976,38 @@
         --spacing-xl: 4rem;
         --spacing-2xl: 5rem;
       }
-      
+
       .hero {
         min-height: 120vh;
       }
-      
+
       .hero-canvas {
         height: 120%;
       }
-      
+
       .hero-content {
         flex-direction: column;
         gap: var(--spacing-md);
         text-align: center;
       }
-      
+
       .hero-title {
         font-size: clamp(2.5rem, 10vw, 6rem);
       }
-      
+
       .hero-title-line:first-child,
       .hero-title-line:last-child {
         text-align: center;
       }
-      
+
       .nav-links {
         gap: var(--spacing-md);
       }
-      
+
       .projects-grid {
         grid-template-columns: 1fr;
       }
-      
+
       .project-modal {
         flex-direction: column;
       }
@@ -985,7 +1016,7 @@
         max-height: 50vh;
         min-height: 300px;
       }
-      
+
       .modal-info {
         width: 100%;
         height: 50vh;
@@ -1009,16 +1040,16 @@
       .modal-description {
         font-size: 0.9375rem;
       }
-      
+
       .footer-links {
         flex-direction: column;
         gap: var(--spacing-lg);
       }
-      
+
       .about-content {
         padding: var(--spacing-md);
       }
-      
+
       .about-text {
         font-size: 1rem;
       }
@@ -1028,19 +1059,19 @@
       .nav-logo {
         font-size: 0.75rem;
       }
-      
+
       .nav-links {
         gap: var(--spacing-sm);
       }
-      
+
       .nav-link {
         font-size: 0.75rem;
       }
-      
+
       .hero-title {
         font-size: clamp(2rem, 9vw, 4rem);
       }
-      
+
       .project-card {
         padding: var(--spacing-sm);
       }
@@ -1063,6 +1094,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Navigation -->
   <nav class="nav">
@@ -1104,7 +1136,6 @@
   <section class="projects" id="projects">
     <div class="container">
       <h2 class="section-title" data-scroll-animate>Collection</h2>
-      
       <div class="projects-grid">
         <!-- Project 1 -->
         <article class="project-card" data-project="1" data-scroll-animate>
@@ -1379,15 +1410,19 @@
       <canvas class="about-canvas" id="about-canvas"></canvas>
       <div class="about-content">
         <div class="about-text">
-          <p>I’m Raph. These are some African masks from various ethnic groups that I’ve grown to be quite fond of, for one reason or another.</p>
+          <p>I’m Raph. These are some African masks from various ethnic groups that I’ve grown to be quite fond of, for one reason or another. I wanted to show them to you mostly because they’ve been on my mind. Growing up, our house was full of them, and if I’m being honest, I thought they were terrifying. I really did. Lately, though, I’ve felt this need to get a little closer to my roots. This whole project is just a small tribute to that feeling.</p>
 
-<p>I wanted to show them to you mostly because they’ve been on my mind. Growing up, our house was full of them, and if I’m being honest, I thought they were terrifying. I really did.</p>
+          <p>I should probably give an actual reason for doing this, other than the lazy but very true one, which is that I think it looks good. The thing is, the older I get, the more everything starts to separate into these sharp little piles in my head. Stuff that used to mildly bug me now really gets under my skin. Stuff I once sort of liked does the same thing, which feels unfair, but there it is.</p>
 
-<p>Lately, though, I’ve felt this need to get a little closer to my roots. This whole project is just a small tribute to that feeling.</p>
+          <p>What really sticks with me, though, is how much simply never showed up. Pre-colonial Africa, for instance, might as well have been a rumor. It wasn’t in the books that were easy to find. It wasn’t on TV. And I can’t pretend I was some heroic kid actively searching for it either. I didn’t know to look. So when I finally did, it felt less like learning something new and more like realizing something had been quietly missing the whole time. Luckily, some people went digging before I ever thought to, and left a trail behind. Otherwise I’m not sure I would have known where to start.</p>
 
-<p>Anyway, that’s really all there is to it. I hope you get something out of them.</p>
+          <p>This is probably the part where I’m supposed to explain why this page exists at all. It started on one of those rainy days that make everything look a little more dramatic than it deserves to be. I was at home when I noticed this trippy-looking mask sitting out on the balcony, doing a very convincing impression of something that was about to rot quietly and be forgotten. So I rushed out and rescued it, because letting a wooden thing die slowly in the rain felt wrong in a way I can’t fully justify.</p>
 
-<p>Best regards</p>
+          <p>Later, being a 3D enthusiast and all, I opened Blender and immediately faced the important question of what to name the file. It was either african_mask or save_wooden_beauty_from_balcony, which tells you roughly where my head was at. After that, I did what anyone with too much time and an internet connection does. I spent a few hours browsing through various self-proclaimed art galleries and some deeply questionable merchant websites. And the one thing they all seemed to have in common was that they were selling these things. Re-selling them, really. That part stuck with me, and it irritated me more than I expected.</p>
+
+          <p>What feels off about it isn’t simply that they’re being sold. Lots of things are sold, and that part alone isn’t the problem. It’s the way it happens. Ownership changes hands without any ceremony at all, like that part never mattered. Profit shows up dressed as appreciation, which makes it harder to call out. And somewhere in the process, the context just slips away.</p>
+
+          <p>It feels worse when you realize that many of these pieces aren’t decorative objects to begin with. They belong to someone’s religion, someone’s way of making sense of the world. But online they’re flattened into product descriptions, advertised as a way to bring a little “exoticism” into your living room, as if that was ever the point.</p>
         </div>
       </div>
     </div>
@@ -1427,7 +1462,7 @@
       }
     }
   </script>
-  
+
   <script type="module">
     // Import dependencies
     import * as THREE from 'three';
@@ -1436,8 +1471,8 @@
     import { SceneManager, ModalSceneManager } from './js/three-scene.js';
 
     // Detect base URL for GitHub Pages or local development
-    const BASE_URL = window.location.pathname.includes('/carved_spirits/') 
-      ? '/carved_spirits/' 
+    const BASE_URL = window.location.pathname.includes('/carved_spirits/')
+      ? '/carved_spirits/'
       : '/';
 
     const MODEL_BASE_PATHS = [
@@ -1579,26 +1614,26 @@
         return new Promise((resolve, reject) => {
           const basePath = this.basePaths[baseIndex] || this.basePaths[0];
           const path = basePath + config.filename;
-          
+
           console.log(`Loading GLB model: ${config.filename}`);
-          
+
           this.loader.load(
             path,
             (gltf) => {
               const object = gltf.scene;
-              
+
               const box = new THREE.Box3().setFromObject(object);
               const center = new THREE.Vector3();
               box.getCenter(center);
               object.position.sub(center);
-              
+
               object.traverse((child) => {
                 if (child.isMesh) {
                   child.castShadow = true;
                   child.receiveShadow = true;
                 }
               });
-              
+
               object.scale.set(config.scale, config.scale, config.scale);
               object.position.set(
                 config.position.x,
@@ -1610,13 +1645,13 @@
                 config.rotation.y,
                 config.rotation.z
               );
-              
+
               object.userData.plyConfig = config;
               object.userData.isPLYModel = true;
               object.userData.title = config.title || config.filename;
               object.userData.subtitle = config.subtitle || '';
               object.userData.tags = config.tags || [];
-              
+
               console.log(`Successfully loaded GLB model: ${config.filename}`);
               resolve(object);
             },
@@ -1650,6 +1685,8 @@
         easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
         direction: 'up',
         preserveSpaces: true,
+        noReplacement: false,
+        disableHover: false,
         classNames: {
           wrapper: 'th-letters-wrapper',
           container: 'th-letter-container',
@@ -1668,12 +1705,12 @@
         this.options = { ...TextHoverAnimation.defaults, ...options };
         this.elements = this._getElements(selector);
         this.animationId = `th-animation-${Math.random().toString(36).substr(2, 9)}`;
-        
+
         if (this.elements.length === 0) {
           console.warn('TextHoverAnimation: No elements found for selector:', selector);
           return;
         }
-        
+
         this._injectStyles();
         this._init();
       }
@@ -1693,12 +1730,12 @@
 
       _injectStyles() {
         const styleId = `th-animation-styles-${this.animationId}`;
-        
+
         if (document.getElementById(styleId)) return;
-        
-        const { duration, easing, direction, classNames } = this.options;
+
+        const { duration, easing, direction, classNames, noReplacement } = this.options;
         const transforms = this._getTransforms(direction);
-        
+
         const css = `
           .${classNames.wrapper} {
             display: inline-flex;
@@ -1732,6 +1769,7 @@
             left: 0;
             width: 100%;
             transform: ${transforms.cloneDefault};
+            ${noReplacement ? 'opacity: 0;' : ''}
           }
           
           .${classNames.container}.${classNames.hovered} .${classNames.original} {
@@ -1739,10 +1777,11 @@
           }
           
           .${classNames.container}.${classNames.hovered} .${classNames.clone} {
-            transform: ${transforms.cloneHovered};
+            transform: ${noReplacement ? transforms.cloneDefault : transforms.cloneHovered};
+            ${noReplacement ? 'opacity: 0;' : ''}
           }
         `;
-        
+
         const styleEl = document.createElement('style');
         styleEl.id = styleId;
         styleEl.textContent = css;
@@ -1776,7 +1815,7 @@
             cloneHovered: 'translateX(0)'
           }
         };
-        
+
         return transforms[direction] || transforms.up;
       }
 
@@ -1790,7 +1829,7 @@
       _splitText(element) {
         const text = element.textContent;
         const { classNames, preserveSpaces } = this.options;
-        
+
         element.setAttribute('data-th-original-text', text);
         element.innerHTML = '';
         element.style.position = 'relative';
@@ -1803,19 +1842,19 @@
           const letterContainer = document.createElement('span');
           letterContainer.className = classNames.container;
           letterContainer.setAttribute('data-th-index', index);
-          
+
           const displayChar = (char === ' ' && preserveSpaces) ? '\u00A0' : char;
-          
+
           const letterOriginal = document.createElement('span');
           letterOriginal.className = `${classNames.letter} ${classNames.original}`;
           letterOriginal.textContent = displayChar;
           letterOriginal.setAttribute('aria-hidden', 'true');
-          
+
           const letterClone = document.createElement('span');
           letterClone.className = `${classNames.letter} ${classNames.clone}`;
           letterClone.textContent = displayChar;
           letterClone.setAttribute('aria-hidden', 'true');
-          
+
           letterContainer.appendChild(letterOriginal);
           letterContainer.appendChild(letterClone);
           wrapper.appendChild(letterContainer);
@@ -1825,27 +1864,29 @@
       }
 
       _addEventListeners(element) {
-        element.addEventListener('mouseenter', () => this._animateIn(element));
-        element.addEventListener('mouseleave', () => this._animateOut(element));
+        if (!this.options.disableHover) {
+          element.addEventListener('mouseenter', () => this._animateIn(element));
+          element.addEventListener('mouseleave', () => this._animateOut(element));
+        }
       }
 
       _animateIn(element) {
         const { classNames, stagger, onHoverStart, onLetterHoverStart } = this.options;
         const letterContainers = element.querySelectorAll(`.${classNames.container}`);
-        
+
         if (typeof onHoverStart === 'function') {
           onHoverStart(element);
         }
-        
+
         letterContainers.forEach((container, index) => {
           const timeoutId = setTimeout(() => {
             container.classList.add(classNames.hovered);
-            
+
             if (typeof onLetterHoverStart === 'function') {
               onLetterHoverStart(container, index);
             }
           }, index * stagger);
-          
+
           container.setAttribute('data-th-timeout', timeoutId);
         });
       }
@@ -1853,26 +1894,43 @@
       _animateOut(element) {
         const { classNames, stagger, onHoverEnd, onLetterHoverEnd } = this.options;
         const letterContainers = element.querySelectorAll(`.${classNames.container}`);
-        
+
         letterContainers.forEach((container, index) => {
           const timeoutId = container.getAttribute('data-th-timeout');
           if (timeoutId) {
             clearTimeout(parseInt(timeoutId));
           }
-          
+
           const reverseTimeoutId = setTimeout(() => {
             container.classList.remove(classNames.hovered);
-            
+
             if (typeof onLetterHoverEnd === 'function') {
               onLetterHoverEnd(container, index);
             }
           }, index * stagger);
-          
+
           container.setAttribute('data-th-timeout', reverseTimeoutId);
         });
-        
+
         if (typeof onHoverEnd === 'function') {
           onHoverEnd(element);
+        }
+      }
+
+      // Public methods to manually trigger animation
+      hide(element) {
+        if (!element && this.elements.length > 0) {
+          this.elements.forEach(el => this._animateIn(el));
+        } else if (element) {
+          this._animateIn(element);
+        }
+      }
+
+      show(element) {
+        if (!element && this.elements.length > 0) {
+          this.elements.forEach(el => this._animateOut(el));
+        } else if (element) {
+          this._animateOut(element);
         }
       }
     }
@@ -1920,32 +1978,32 @@
       const heroContent = document.querySelector('.hero-content');
       const scrollIndicator = document.querySelector('.scroll-indicator');
       const projectsSection = document.getElementById('projects');
-      
+
       if (!hero || !projectsSection) return;
 
       lenis.on('scroll', ({ scroll }) => {
         const heroHeight = hero.offsetHeight;
         const scrollProgress = Math.min(1, Math.max(0, scroll / (heroHeight * 0.8)));
-        
+
         if (heroTextScene) {
           heroTextScene.setScrollProgress(scrollProgress);
         }
-        
+
         const opacity = 1 - scrollProgress;
         const fadeOpacity = Math.max(0, 1 - scrollProgress * 1.5);
-        
+
         if (heroCanvas) {
           heroCanvas.style.opacity = fadeOpacity;
         }
-        
+
         if (heroContent) {
           heroContent.style.opacity = fadeOpacity;
         }
-        
+
         if (scrollIndicator) {
           scrollIndicator.style.opacity = Math.max(0, 1 - scrollProgress * 3);
         }
-        
+
         const scale = 1 + scrollProgress * 0.1;
         if (hero) {
           hero.style.transform = `scale(${scale})`;
@@ -1976,24 +2034,24 @@
     function initHorizontalScrollAnimation(lenis, horizontalScene) {
       const horizontalSection = document.getElementById('horizontal-scroll');
       const progressBar = document.querySelector('.progress-bar');
-      
+
       if (!horizontalSection || !horizontalScene) return;
 
       lenis.on('scroll', ({ scroll }) => {
         const sectionTop = horizontalSection.offsetTop;
         const sectionHeight = horizontalSection.offsetHeight;
         const viewportHeight = window.innerHeight;
-        
+
         const sectionStart = sectionTop;
         const sectionEnd = sectionTop + sectionHeight - viewportHeight;
-        
+
         if (scroll >= sectionStart && scroll <= sectionEnd) {
           const scrollInSection = scroll - sectionStart;
           const scrollableHeight = sectionHeight - viewportHeight;
           const progress = Math.min(1, Math.max(0, scrollInSection / scrollableHeight));
-          
+
           horizontalScene.setScrollProgress(progress);
-          
+
           if (progressBar) {
             progressBar.style.width = `${progress * 100}%`;
           }
@@ -2071,35 +2129,35 @@
       loadTreeModel(baseIndex = 0) {
         const loader = new GLTFLoader();
         const basePath = MODEL_BASE_PATHS[baseIndex] || MODEL_BASE_PATHS[0];
-        
+
         loader.load(
           basePath + 'tree.glb',
           (gltf) => {
             this.treeModel = gltf.scene;
-            
+
             const box = new THREE.Box3().setFromObject(this.treeModel);
             const center = box.getCenter(new THREE.Vector3());
             const size = box.getSize(new THREE.Vector3());
-            
+
             this.treeModel.position.x = -center.x;
             this.treeModel.position.y = -center.y;
             this.treeModel.position.z = -center.z;
-            
+
             const maxDim = Math.max(size.x, size.y, size.z);
             const scale = 20 / maxDim;
             this.treeModel.scale.set(scale, scale, scale);
-            
+
             this.treeModel.traverse((child) => {
               if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
-                
+
                 if (child.material) {
                   child.material.needsUpdate = true;
                 }
               }
             });
-            
+
             this.scene.add(this.treeModel);
             this.isLoaded = true;
             console.log('Tree model loaded successfully');
@@ -2199,17 +2257,17 @@
         this.animationId = null;
         this.currentShapeIndex = 0;
         this.scrollProgress = 0;
-        
+
         this.init();
       }
 
       init() {
         this.scene = new THREE.Scene();
-        
+
         const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
         this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
         this.camera.position.z = 5;
-        
+
         this.renderer = new THREE.WebGLRenderer({
           canvas: this.canvas,
           alpha: true,
@@ -2218,20 +2276,20 @@
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setClearColor(0x000000, 0);
-        
+
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         this.scene.add(ambientLight);
-        
+
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
         directionalLight.position.set(5, 5, 5);
         this.scene.add(directionalLight);
-        
+
         const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
         backLight.position.set(-5, -5, -5);
         this.scene.add(backLight);
-        
+
         this.loadPLYModels();
-        
+
         this.animate();
       }
 
@@ -2240,33 +2298,33 @@
           console.warn('No GLB models configured to load');
           return;
         }
-        
+
         try {
           const loader = new PLYModelLoader();
-          
+
           const modelsWithProjects = PLY_MODELS_CONFIG.filter(config => config.projectId);
           const modelsWithoutProjects = PLY_MODELS_CONFIG.filter(config => !config.projectId);
-          
+
           modelsWithProjects.sort((a, b) => parseInt(a.projectId) - parseInt(b.projectId));
-          
+
           const allModelsInOrder = [...modelsWithProjects, ...modelsWithoutProjects];
-          
+
           for (const config of allModelsInOrder) {
             const model = await loader.loadModel(config);
-            
+
             model.position.set(10, 0, 0);
             model.scale.set(0, 0, 0);
             model.userData.targetPosition = { x: 0, y: 0, z: 0 };
             model.userData.index = this.shapes.length;
             model.userData.visible = false;
             model.userData.isGLBModel = true;
-            
+
             this.shapes.push(model);
             this.scene.add(model);
-            
+
             console.log(`Added horizontal scroll model ${this.shapes.length}: ${model.userData.title}`);
           }
-          
+
           console.log(`Configured ${this.shapes.length} GLB model(s) in horizontal scroll`);
         } catch (error) {
           console.error('Error loading GLB models in HorizontalScrollScene:', error);
@@ -2276,35 +2334,35 @@
       updateShapes(progress) {
         const numShapes = this.shapes.length;
         const progressPerShape = 1 / numShapes;
-        
+
         this.shapes.forEach((shape, index) => {
           const shapeStartProgress = index * progressPerShape;
           const shapeEndProgress = (index + 1) * progressPerShape;
-          
+
           let shapeProgress = (progress - shapeStartProgress) / progressPerShape;
           shapeProgress = Math.max(0, Math.min(1, shapeProgress));
-          
+
           const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
           const easedProgress = easeOutQuart(shapeProgress);
-          
+
           const startX = 10;
           const targetPos = shape.userData.targetPosition;
           const endX = typeof targetPos === 'object' ? targetPos.x : targetPos.x || 0;
           shape.position.x = startX + (endX - startX) * easedProgress;
-          
+
           const scale = easedProgress;
           shape.scale.set(scale, scale, scale);
-          
+
           if (shapeProgress > 0.01) {
             shape.userData.visible = true;
           }
-          
+
           if (progress > shapeEndProgress) {
             const exitProgress = (progress - shapeEndProgress) / (progressPerShape * 0.5);
             const exitEased = Math.min(1, exitProgress);
-            
+
             shape.position.x = endX - exitEased * 15;
-            
+
             const opacity = 1 - exitEased;
             shape.traverse((child) => {
               if (child.material) {
@@ -2319,7 +2377,7 @@
                 }
               }
             });
-            
+
             const exitScale = 1 - exitEased * 0.5;
             shape.scale.set(exitScale, exitScale, exitScale);
           } else {
@@ -2342,7 +2400,7 @@
 
       animate() {
         this.animationId = requestAnimationFrame(this.animate.bind(this));
-        
+
         this.renderer.render(this.scene, this.camera);
       }
 
@@ -2354,10 +2412,10 @@
       handleResize() {
         const width = this.canvas.clientWidth;
         const height = this.canvas.clientHeight;
-        
+
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-        
+
         this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       }
@@ -2366,7 +2424,7 @@
         if (this.animationId) {
           cancelAnimationFrame(this.animationId);
         }
-        
+
         this.shapes.forEach(shape => {
           shape.traverse((child) => {
             if (child.geometry) child.geometry.dispose();
@@ -2381,7 +2439,7 @@
           this.scene.remove(shape);
         });
         this.shapes = [];
-        
+
         if (this.renderer) {
           this.renderer.dispose();
         }
@@ -2397,7 +2455,7 @@
         this.modal = document.getElementById('project-modal');
         this.modalCanvas = document.getElementById('modal-canvas');
         this.modalClose = document.querySelector('.modal-close');
-        
+
         this.init();
       }
 
@@ -2406,12 +2464,12 @@
         projectCards.forEach(card => {
           const projectId = card.dataset.project;
           const canvas = card.querySelector('.project-canvas');
-          
+
           if (canvas) {
             const scene = new SceneManager(canvas, projectId);
             this.scenes.set(projectId, scene);
           }
-          
+
           const expandBtn = card.querySelector('.project-expand');
           if (expandBtn) {
             expandBtn.addEventListener('click', (e) => {
@@ -2419,24 +2477,24 @@
               this.openModal(projectId, card);
             });
           }
-          
+
           card.addEventListener('click', () => {
             this.openModal(projectId, card);
           });
         });
-        
+
         if (this.modalClose) {
           this.modalClose.addEventListener('click', () => {
             this.closeModal();
           });
         }
-        
+
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && this.modal.classList.contains('active')) {
             this.closeModal();
           }
         });
-        
+
         window.addEventListener('resize', () => {
           this.handleResize();
         });
@@ -2444,38 +2502,38 @@
 
       openModal(projectId, card) {
         this.currentProject = projectId;
-        
+
         const title = card.querySelector('.project-title').textContent;
         const descriptionEl = card.querySelector('.project-description');
         // Get the full text if it exists, otherwise use the regular text
         const description = descriptionEl.getAttribute('data-full-text') || descriptionEl.textContent;
         const number = card.querySelector('.project-number').textContent;
         const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent);
-        
+
         document.querySelector('.modal-number').textContent = number;
         document.querySelector('.modal-title').textContent = title;
         document.querySelector('.modal-description').textContent = description;
-        
+
         const modalTagsContainer = document.querySelector('.modal-tags');
-        modalTagsContainer.innerHTML = tags.map(tag => 
+        modalTagsContainer.innerHTML = tags.map(tag =>
           `<span class="tag">${tag}</span>`
         ).join('');
-        
+
         if (this.modalScene) {
           this.modalScene.dispose();
         }
         this.modalScene = new ModalSceneManager(this.modalCanvas, projectId);
-        
+
         this.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
+
         // Show mobile hint on first visit (mobile only)
         this.showMobileHint();
-        
+
         // Add scroll listener for sticky header border effect
         const modalInfo = document.querySelector('.modal-info');
         const descriptionWrapper = document.querySelector('.modal-description-wrapper');
-        
+
         if (descriptionWrapper) {
           const handleScroll = () => {
             if (descriptionWrapper.scrollTop > 0) {
@@ -2484,11 +2542,11 @@
               modalInfo.classList.remove('scrolled');
             }
           };
-          
+
           descriptionWrapper.addEventListener('scroll', handleScroll);
           this.modalScrollHandler = handleScroll;
         }
-        
+
         setTimeout(() => {
           if (this.modalScene) {
             this.modalScene.handleResize();
@@ -2498,19 +2556,19 @@
 
       showMobileHint() {
         // Only show on mobile devices
-        const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) 
+        const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0)
           && window.innerWidth <= 1024;
-        
+
         if (!isMobile) return;
-        
+
         // Check if user has seen the hint before
         const hasSeenHint = localStorage.getItem('carved_spirits_mobile_hint_seen');
-        
+
         if (!hasSeenHint) {
           const hintEl = document.getElementById('mobile-hint');
           if (hintEl) {
             hintEl.style.display = 'block';
-            
+
             // Mark as seen after showing
             setTimeout(() => {
               localStorage.setItem('carved_spirits_mobile_hint_seen', 'true');
@@ -2523,25 +2581,25 @@
       closeModal() {
         this.modal.classList.remove('active');
         document.body.style.overflow = '';
-        
+
         // Remove scroll listener
         const descriptionWrapper = document.querySelector('.modal-description-wrapper');
         if (descriptionWrapper && this.modalScrollHandler) {
           descriptionWrapper.removeEventListener('scroll', this.modalScrollHandler);
           this.modalScrollHandler = null;
         }
-        
+
         // Remove scrolled class
         const modalInfo = document.querySelector('.modal-info');
         if (modalInfo) {
           modalInfo.classList.remove('scrolled');
         }
-        
+
         if (this.modalScene) {
           this.modalScene.dispose();
           this.modalScene = null;
         }
-        
+
         this.currentProject = null;
       }
 
@@ -2549,7 +2607,7 @@
         this.scenes.forEach(scene => {
           scene.handleResize();
         });
-        
+
         if (this.modalScene) {
           this.modalScene.handleResize();
         }
@@ -2559,55 +2617,55 @@
     // ===== Initialize Description Truncation =====
     function initDescriptionTruncation() {
       const MAX_CHARS = 50;
-      
+
       document.querySelectorAll('.project-card').forEach(card => {
         const descriptionEl = card.querySelector('.project-description');
         if (!descriptionEl) return;
-        
+
         const fullText = descriptionEl.textContent.trim();
-        
+
         // Only add see more/less if text exceeds max characters
         if (fullText.length > MAX_CHARS) {
           const truncatedText = fullText.substring(0, MAX_CHARS);
-          
+
           // Store the full text as a data attribute
           descriptionEl.setAttribute('data-full-text', fullText);
           descriptionEl.setAttribute('data-truncated-text', truncatedText);
-          
+
           // Create wrapper for smooth height animation
           const wrapper = document.createElement('div');
           wrapper.className = 'description-wrapper';
-          
+
           // Create content holder
           const content = document.createElement('span');
           content.textContent = truncatedText + '... ';
-          
+
           // Create see more toggle as inline element
           const toggleBtn = document.createElement('span');
           toggleBtn.className = 'see-more-toggle';
           toggleBtn.textContent = 'see more';
-          
+
           // Replace description content
           descriptionEl.innerHTML = '';
           wrapper.appendChild(content);
           wrapper.appendChild(toggleBtn);
           descriptionEl.appendChild(wrapper);
-          
+
           // Measure heights
           let truncatedHeight = wrapper.scrollHeight;
           content.textContent = fullText + ' ';
           let fullHeight = wrapper.scrollHeight;
           content.textContent = truncatedText + '... ';
-          
+
           // Set initial height
           wrapper.style.maxHeight = truncatedHeight + 'px';
-          
+
           let isExpanded = false;
-          
+
           // Add click handler
           toggleBtn.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent card click
-            
+
             if (isExpanded) {
               // Collapse
               card.classList.remove('description-expanded');
@@ -2616,16 +2674,16 @@
               requestAnimationFrame(() => {
                 wrapper.style.maxHeight = truncatedHeight + 'px';
               });
-              
+
               setTimeout(() => {
                 content.textContent = truncatedText + '... ';
                 toggleBtn.textContent = 'see more';
-                
+
                 // Remeasure truncated height
                 const newTruncatedHeight = wrapper.scrollHeight;
                 wrapper.style.maxHeight = newTruncatedHeight + 'px';
               }, 600);
-              
+
               isExpanded = false;
             } else {
               // Expand
@@ -2633,7 +2691,7 @@
               content.textContent = fullText + ' ';
               const newFullHeight = wrapper.scrollHeight;
               content.textContent = truncatedText + '... ';
-              
+
               wrapper.style.maxHeight = currentHeight + 'px';
               requestAnimationFrame(() => {
                 content.textContent = fullText + ' ';
@@ -2643,7 +2701,7 @@
                 wrapper.classList.add('expanded');
                 card.classList.add('description-expanded');
               });
-              
+
               fullHeight = newFullHeight;
               isExpanded = true;
             }
@@ -2659,15 +2717,15 @@
       const aboutClose = document.querySelector('.about-close');
       const aboutCanvas = document.getElementById('about-canvas');
       let aboutTreeScene = null;
-      
+
       function openAbout() {
         aboutSection.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
+
         if (!aboutTreeScene && aboutCanvas) {
           aboutTreeScene = new HeroTextScene(aboutCanvas);
-          
-          aboutTreeScene.handleResize = function() {
+
+          aboutTreeScene.handleResize = function () {
             const width = window.innerWidth;
             const height = window.innerHeight;
 
@@ -2677,53 +2735,53 @@
             this.renderer.setSize(width, height);
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
           };
-          
+
           setTimeout(() => {
             if (aboutTreeScene) {
               const width = window.innerWidth;
               const height = window.innerHeight;
-              
+
               aboutTreeScene.camera.aspect = width / height;
               aboutTreeScene.camera.updateProjectionMatrix();
-              
+
               aboutTreeScene.camera.position.set(0, 0, 20);
-              
+
               aboutTreeScene.renderer.setSize(width, height);
               aboutTreeScene.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             }
           }, 100);
         }
       }
-      
+
       function closeAbout() {
         aboutSection.classList.remove('active');
         document.body.style.overflow = '';
-        
+
         if (aboutTreeScene) {
           aboutTreeScene.dispose();
           aboutTreeScene = null;
         }
       }
-      
+
       if (aboutLink) {
         aboutLink.addEventListener('click', (e) => {
           e.preventDefault();
           openAbout();
         });
       }
-      
+
       if (aboutClose) {
         aboutClose.addEventListener('click', () => {
           closeAbout();
         });
       }
-      
+
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && aboutSection.classList.contains('active')) {
           closeAbout();
         }
       });
-      
+
       if (aboutSection) {
         aboutSection.addEventListener('click', (e) => {
           if (e.target === aboutSection) {
@@ -2733,52 +2791,117 @@
       }
     }
 
+    // ===== Initialize Scroll Reactive Header =====
+    function initScrollReactiveHeader() {
+      const SCROLL_THRESHOLD = 20;
+      let lastScrollY = window.scrollY || window.pageYOffset;
+      let isHidden = false;
+      let ticking = false;
+
+      // Get all nav elements to animate
+      const navLogo = document.querySelector('.nav-logo');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const allNavElements = [navLogo, ...navLinks].filter(el => el);
+
+      // Initialize animations with noReplacement and disableHover for scroll behavior
+      const animations = allNavElements.map(element => {
+        return new TextHoverAnimation(element, {
+          duration: 600,
+          stagger: 35,
+          easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+          direction: 'up',
+          noReplacement: true,
+          disableHover: true
+        });
+      });
+
+      // Handle scroll direction
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY || window.pageYOffset;
+
+        // Don't do anything if we're at the very top
+        if (currentScrollY < SCROLL_THRESHOLD) {
+          if (isHidden) {
+            animations.forEach(animation => animation.show());
+            isHidden = false;
+          }
+          lastScrollY = currentScrollY;
+          ticking = false;
+          return;
+        }
+
+        // Determine scroll direction
+        const scrollingDown = currentScrollY > lastScrollY;
+        const scrollingUp = currentScrollY < lastScrollY;
+
+        // Hide when scrolling down
+        if (scrollingDown && !isHidden) {
+          animations.forEach(animation => animation.hide());
+          isHidden = true;
+        }
+        // Show when scrolling up
+        else if (scrollingUp && isHidden) {
+          animations.forEach(animation => animation.show());
+          isHidden = false;
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+      };
+
+      // Use requestAnimationFrame for better performance
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(handleScroll);
+          ticking = true;
+        }
+      });
+
+      return animations;
+    }
+
     // ===== Main Init =====
     function init() {
-      new TextHoverAnimation('.nav-link', {
-        duration: 700,
-        stagger: 40,
-        easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
-        direction: 'up'
-      });
-      
+      // Initialize scroll-reactive header (includes logo and nav links)
+      initScrollReactiveHeader();
+
       const lenis = initLenis();
-      
+
       initScrollAnimations();
-      
+
       const heroCanvas = document.getElementById('hero-canvas');
       let heroTextScene = null;
-      
+
       if (heroCanvas) {
         heroTextScene = new HeroTextScene(heroCanvas);
       }
-      
+
       initHeroScrollAnimation(lenis, heroTextScene);
-      
+
       const horizontalScrollContainer = document.querySelector('.horizontal-scroll-container');
       let horizontalScene = null;
-      
+
       if (horizontalScrollContainer) {
         horizontalScene = new HorizontalScrollScene(horizontalScrollContainer);
         initHorizontalScrollAnimation(lenis, horizontalScene);
-        
+
         window.addEventListener('resize', () => {
           if (horizontalScene) {
             horizontalScene.handleResize();
           }
         });
       }
-      
+
       const projectManager = new ProjectManager();
-      
+
       initDescriptionTruncation();
-      
+
       initAboutSection(heroTextScene);
-      
+
       window.addEventListener('load', () => {
         document.body.classList.add('loaded');
       });
-      
+
       console.log('Portfolio initialized');
     }
 
@@ -2790,4 +2913,5 @@
     }
   </script>
 </body>
+
 </html>

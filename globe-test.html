@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earth Globe Test - Three.js</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #000000;
+      color: #ffffff;
+    }
+
+    #canvas-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    #info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    #info h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    #info p {
+      font-size: 14px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      z-index: 5;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #event-overlay {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+      z-index: 100;
+      max-width: 300px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    #event-overlay.visible {
+      opacity: 1;
+    }
+
+    #event-overlay img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    #event-overlay h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    #event-overlay p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #cccccc;
+    }
+
+    /* Project Modal Styles (Adapted from index.html) */
+    .project-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0a0a0a;
+      z-index: 2000;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-image-container {
+      flex: 1;
+      position: relative;
+      background: #111;
+      overflow: hidden;
+    }
+
+    .modal-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-info {
+      width: 400px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #1a1a1a;
+      background: #0a0a0a;
+      padding: 40px;
+    }
+
+    .modal-header {
+      margin-bottom: 2rem;
+    }
+
+    .modal-number {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #808080;
+      margin-bottom: 1rem;
+    }
+
+    .modal-title {
+      font-size: 2.5rem;
+      font-weight: 300;
+      line-height: 1.2;
+      color: #fff;
+    }
+
+    .modal-description {
+      font-size: 1rem;
+      color: #aaa;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2001;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 24px;
+      transition: all 0.3s ease;
+      border-radius: 50%;
+    }
+
+    .modal-close:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* Minimal Overlay Styles */
+    .minimal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0a0a0a;
+      /* Main theme background */
+      z-index: 2000;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 80px 20px;
+    }
+
+    .minimal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .minimal-content-container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .minimal-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease-out 0.2s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .minimal-date {
+      font-family: monospace;
+      color: #808080;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .minimal-title {
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .minimal-section {
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease-out 0.4s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .minimal-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 30px;
+      filter: brightness(0.9);
+    }
+
+    .minimal-text {
+      font-size: 1.1rem;
+      color: #ccc;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .minimal-close {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      font-size: 14px;
+      color: #808080;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      z-index: 2002;
+      padding: 10px 20px;
+      border: 1px solid #333;
+      transition: all 0.3s ease;
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .minimal-close:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .project-modal {
+        flex-direction: column;
+      }
+
+      .modal-image-container {
+        height: 40vh;
+      }
+
+      .modal-info {
+        width: 100%;
+        height: 60vh;
+        border-left: none;
+        border-top: 1px solid #1a1a1a;
+        padding: 20px;
+      }
+
+      .minimal-title {
+        font-size: 2.5rem;
+      }
+    }
+
+    /* Filter Toggle Styles */
+    #filter-container {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      z-index: 100;
+      display: flex;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 4px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: none;
+      color: #888;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .filter-btn:hover {
+      color: #fff;
+    }
+
+    .filter-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="canvas-container"></div>
+
+  <div id="info">
+    <h1>Earth Globe 2050</h1>
+    <p>Drag to rotate • Scroll to zoom<br>
+      Country outlines displayed<br>
+      Inspired by 2050.earth</p>
+  </div>
+
+  <div id="filter-container">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="object">Objects</button>
+    <button class="filter-btn" data-filter="society">Societies</button>
+  </div>
+
+  <div id="loading">Loading Earth...</div>
+
+  <div id="event-overlay">
+    <img id="overlay-image" src="" alt="">
+    <h3 id="overlay-label"></h3>
+    <p id="overlay-description"></p>
+  </div>
+
+  <!-- Project Modal (Object Type) -->
+  <div class="project-modal" id="project-modal">
+    <button class="modal-close" aria-label="Close modal">×</button>
+    <div class="modal-image-container">
+      <img class="modal-image" src="" alt="Event Image">
+    </div>
+    <div class="modal-info">
+      <div class="modal-header">
+        <div class="modal-number"></div>
+        <h2 class="modal-title"></h2>
+      </div>
+      <p class="modal-description"></p>
+    </div>
+  </div>
+
+  <!-- Minimal Overlay (Ethnic Group / Region Type) -->
+  <div class="minimal-overlay" id="minimal-overlay">
+    <button class="minimal-close">Close</button>
+    <div class="minimal-content-container">
+      <!-- Content injected via JS -->
+    </div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    // Camera setup
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 3;
+
+    // Renderer setup
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 1.5;
+    controls.maxDistance = 5;
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 0.5;
+    controls.enablePan = false;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 3, 5);
+    scene.add(directionalLight);
+
+    const backLight = new THREE.DirectionalLight(0x4488ff, 0.3);
+    backLight.position.set(-5, -3, -5);
+    scene.add(backLight);
+
+    // Texture loader
+    const textureLoader = new THREE.TextureLoader();
+    const loadingEl = document.getElementById('loading');
+
+    // Create globe group
+    const globeGroup = new THREE.Group();
+    scene.add(globeGroup);
+
+    // Load textures
+    let texturesLoaded = 0;
+    const totalTextures = 2; // Earth base + combined contours
+
+    function checkLoading() {
+      texturesLoaded++;
+      if (texturesLoaded >= totalTextures) {
+        loadingEl.classList.add('hidden');
+      }
+    }
+
+    // Main Earth sphere with higher resolution
+    const earthGeometry = new THREE.SphereGeometry(1, 128, 128);
+
+    textureLoader.load(
+      './assets/earth/earth_1.png',
+      (texture) => {
+        // Enable anisotropic filtering for better quality
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+        const earthMaterial = new THREE.MeshPhongMaterial({
+          map: texture,
+          shininess: 10,
+          specular: new THREE.Color(0x222222),
+          emissive: new THREE.Color(0x000000),
+          emissiveIntensity: 0
+        });
+
+        const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+        globeGroup.add(earthMesh);
+        checkLoading();
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading earth texture:', error);
+        // Create fallback material
+        const fallbackMaterial = new THREE.MeshPhongMaterial({
+          color: 0x1a1a2e,
+          shininess: 10
+        });
+        const earthMesh = new THREE.Mesh(earthGeometry, fallbackMaterial);
+        globeGroup.add(earthMesh);
+        checkLoading();
+      }
+    );
+
+    // Combine the two contour halves into one complete texture
+    function combineContourTextures() {
+      const img1 = new Image();
+      const img2 = new Image();
+      let loaded = 0;
+
+      img1.crossOrigin = 'anonymous';
+      img2.crossOrigin = 'anonymous';
+
+      function onLoad() {
+        loaded++;
+        if (loaded === 2) {
+          // Create canvas to combine both images
+          const canvas = document.createElement('canvas');
+          // Assuming both images are square and need to be placed side by side
+          // For equirectangular projection: width should be 2x height
+          canvas.width = img1.width * 2;
+          canvas.height = img1.height;
+
+          const ctx = canvas.getContext('2d');
+
+          // Clear canvas with transparent background
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw first half (left side)
+          ctx.drawImage(img1, 0, 0, img1.width, img1.height);
+
+          // Draw second half (right side)
+          ctx.drawImage(img2, img1.width, 0, img2.width, img2.height);
+
+          // Create texture from combined canvas
+          const combinedTexture = new THREE.CanvasTexture(canvas);
+          combinedTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          combinedTexture.needsUpdate = true;
+
+          // Create contour overlay slightly larger than Earth
+          const contourGeometry = new THREE.SphereGeometry(1.003, 128, 128);
+          const contourMaterial = new THREE.MeshBasicMaterial({
+            map: combinedTexture,
+            transparent: true,
+            opacity: 1.0,
+            blending: THREE.NormalBlending,
+            depthWrite: false,
+            side: THREE.DoubleSide
+          });
+
+          const contourMesh = new THREE.Mesh(contourGeometry, contourMaterial);
+          globeGroup.add(contourMesh);
+          checkLoading();
+        }
+      }
+
+      img1.onload = onLoad;
+      img2.onload = onLoad;
+
+      img1.onerror = () => {
+        console.error('Error loading contour1_1.png');
+        checkLoading();
+      };
+      img2.onerror = () => {
+        console.error('Error loading contour2_1.png');
+        checkLoading();
+      };
+
+      img1.src = './assets/earth/contour1_1.png';
+      img2.src = './assets/earth/contour2_1.png';
+    }
+
+    // Start combining contour textures
+    combineContourTextures();
+
+    // Atmosphere glow effect
+    const atmosphereGeometry = new THREE.SphereGeometry(1.15, 64, 64);
+    const atmosphereMaterial = new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vNormal;
+        void main() {
+          float intensity = pow(0.6 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+          gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity;
+        }
+      `,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide,
+      transparent: true
+    });
+
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    globeGroup.add(atmosphere);
+
+    // Event Points System
+    const eventPoints = [];
+    const eventMarkers = [];
+
+    // Event Classes
+    class WorldEvent {
+      constructor(label, date, image, description, clickable = true) {
+        this.label = label;
+        this.date = date;
+        this.clickable = clickable;
+        this._image = image;
+        this._description = description;
+      }
+      get image() { return this._image; }
+      get description() { return this._description; }
+    }
+
+    class EventObject extends WorldEvent {
+      constructor(label, date, coordinates, image, description) {
+        super(label, date, image, description);
+        this.coordinates = coordinates;
+      }
+    }
+
+    class EventRegion extends WorldEvent {
+      constructor(label, date, coordinates, content) {
+        // Use first content item for base image/description
+        super(label, date, content[0]?.image || "", content[0]?.text || "");
+        this.coordinates = coordinates;
+        this.content = content;
+      }
+    }
+
+    class EventEthnicGroup extends WorldEvent {
+      constructor(label, date, coordinatesList, content) {
+        // Use first content item for base image/description
+        super(label, date, content[0]?.image || "", content[0]?.text || "");
+        this.coordinatesList = coordinatesList;
+        this.content = content;
+      }
+    }
+
+    // Sample event data
+    const eventsData = [
+      // Pende people (Democratic Republic of the Congo)
+new EventEthnicGroup(
+  "Pende People",
+  "2024-05",
+  [ { lat: -5.0, lon: 18.5 } ], // Approx central DRC Kwilu/Kasai region
+  [
+    {
+      text: "Pende are a Bantu ethnic group primarily in southwestern DR Congo, known for rich mask‐making traditions and matrilineal ties.",
+      image: "./assets/ethnic/pende.jpg"
+    }
+  ]
+),
+
+// Baluba / Luba people (DR Congo)
+new EventEthnicGroup(
+  "Baluba (Luba) People",
+  "2024-05",
+  [ { lat: -6.0, lon: 23.5 } ], // Approx central/southern DRC Luba region
+  [
+    {
+      text: "The Baluba or Luba are a large Bantu ethnolinguistic group in south-central DR Congo with many subgroups.",
+      image: "./assets/ethnic/luba.jpg"
+    }
+  ]
+),
+
+// Bamiléké people (Cameroon)
+new EventEthnicGroup(
+  "Bamiléké People",
+  "2024-05",
+  [ { lat: 5.3, lon: 10.5 } ], // Western highlands Cameroon
+  [
+    {
+      text: "The Bamiléké inhabit the Grassfields of the West and Northwest Regions of Cameroon and include many related chiefdoms and languages.",
+      image: "./assets/ethnic/bamileke.jpg"
+    }
+  ]
+),
+
+// Igbo people (Nigeria and diasporas)
+new EventEthnicGroup(
+  "Igbo People",
+  "2024-05",
+  [ { lat: 6.5, lon: 7.5 } ], // Southeastern Nigeria approximate
+  [
+    {
+      text: "The Igbo are a major West African ethnic group predominantly in southeastern Nigeria, with communities in neighboring states and diaspora.",
+      image: "./assets/ethnic/igbo.jpg"
+    }
+  ]
+),
+
+// Dan people (Ivory Coast / Liberia)
+new EventEthnicGroup(
+  "Dan People",
+  "2024-05",
+  [
+    { lat: 7.4, lon: -7.5 }, // Ivory Coast (Man region)
+    { lat: 6.9, lon: -9.5 }  // Neighboring Liberia foothills
+  ],
+  [
+    {
+      text: "The Dan (also called Yacouba or Gio) are a Mande people in northwestern Ivory Coast and adjacent Liberia known for mask rituals and forest culture.",
+      image: "./assets/ethnic/dan.jpg"
+    }
+  ]
+),
+
+// Bambara people (Mali and wider West Africa)
+new EventEthnicGroup(
+  "Bambara People",
+  "2024-05",
+  [
+    { lat: 12.6, lon: -8.0 }, // Bamako / central Mali area
+    { lat: 11.4, lon: -5.4 }, // Sikasso / Bamana Sahel
+  ],
+  [
+    {
+      text: "The Bambara (Banmana) are a major Mandé ethnic group of West Africa, especially central Mali along the Niger River, with populations in surrounding Sahelian states.",
+      image: "./assets/ethnic/bambara.jpg"
+    }
+  ]
+),
+
+      new EventObject(
+        "Ancient Temple Discovery",
+        "2024-01",
+        { lat: 40.7128, lon: -74.0060 }, // New York
+        "./assets/earth/bg.jpg",
+        "A remarkable temple from 3000 BCE discovered beneath the city."
+      ),
+      new EventRegion(
+        "Sacred Mountain Site",
+        "2024-02",
+        { lat: 51.5074, lon: -0.1278 }, // London
+        [{ text: "Ancient meditation site used by monks for centuries.", image: "./assets/earth/clouds.jpg" }]
+      ),
+      new EventObject(
+        "Historical Monument",
+        "2024-03",
+        { lat: 35.6762, lon: 139.6503 }, // Tokyo
+        "./assets/earth/bg.jpg",
+        "Important cultural heritage site from the Edo period."
+      ),
+      new EventEthnicGroup(
+        "Ancient Civilization Traces",
+        "2024-04",
+        [{ lat: -33.8688, lon: 151.2093 }, { lat: -31.9505, lon: 115.8605 }], // Sydney and Perth
+        [{ text: "Recently excavated ruins revealing ancient civilization.", image: "./assets/earth/clouds.jpg" }]
+      )
+    ];
+
+    // Convert lat/lon to 3D position on sphere
+    function latLonToVector3(lat, lon, radius = 1) {
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+
+      const x = -(radius * Math.sin(phi) * Math.cos(theta));
+      const z = radius * Math.sin(phi) * Math.sin(theta);
+      const y = radius * Math.cos(phi);
+
+      return new THREE.Vector3(x, y, z);
+    }
+
+    // Create event point with dot and light ray
+    function createEventVisual(lat, lon, eventData) {
+      const group = new THREE.Group();
+      const position = latLonToVector3(
+        lat,
+        lon,
+        1.01
+      );
+
+      // Get surface normal for orientation
+      const normal = position.clone().normalize();
+
+      // Create dot marker
+      const dotTexture = textureLoader.load('./assets/earth/dot.png');
+      const dotGeometry = new THREE.PlaneGeometry(0.03, 0.03);
+      const dotMaterial = new THREE.MeshBasicMaterial({
+        map: dotTexture,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+
+      const dotMesh = new THREE.Mesh(dotGeometry, dotMaterial);
+      dotMesh.position.copy(position);
+      dotMesh.lookAt(position.clone().multiplyScalar(2));
+      group.add(dotMesh);
+
+      // Create light ray with additive blending
+      const lightrayTexture = textureLoader.load('./assets/earth/lightray.jpg');
+      const lightrayGeometry = new THREE.PlaneGeometry(0.05, 0.3);
+      const lightrayMaterial = new THREE.MeshBasicMaterial({
+        map: lightrayTexture,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        opacity: 0.8
+      });
+
+      const lightrayMesh = new THREE.Mesh(lightrayGeometry, lightrayMaterial);
+
+      // Position lightray offset from surface (center of the ray extending outward)
+      const offset = normal.clone().multiplyScalar(0.15);
+      lightrayMesh.position.copy(position.clone().add(offset));
+
+      // Orient lightray radially - the plane should stand perpendicular to the surface
+      // We want the plane to be vertical relative to the sphere surface
+      // quaternion.setFromUnitVectors aligns one vector to another
+      const up = new THREE.Vector3(0, 1, 0); // default "up" of the plane
+      const quaternion = new THREE.Quaternion();
+      quaternion.setFromUnitVectors(up, normal);
+      lightrayMesh.quaternion.copy(quaternion);
+
+      group.add(lightrayMesh);
+
+      // Store reference to event data and normal for animation
+      group.userData = {
+        eventData: eventData,
+        dotMesh: dotMesh,
+        lightrayMesh: lightrayMesh,
+        eventData: eventData,
+        dotMesh: dotMesh,
+        lightrayMesh: lightrayMesh,
+        normal: normal.clone(), // Store the normal for rotation animation
+        animationScale: 1.0, // For filter animations
+        baseScale: 1.0 // Base scale for the marker
+      };
+
+      globeGroup.add(group);
+      eventMarkers.push(group);
+
+      return group;
+    }
+
+    // Create all event points
+    eventsData.forEach(event => {
+      if (event instanceof EventEthnicGroup) {
+        event.coordinatesList.forEach(coord => {
+          createEventVisual(coord.lat, coord.lon, event);
+        });
+      } else {
+        createEventVisual(event.coordinates.lat, event.coordinates.lon, event);
+      }
+    });
+
+    // Raycaster for hover detection
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hoveredEvent = null;
+
+    // Get overlay elements
+    const overlay = document.getElementById('event-overlay');
+    const overlayImage = document.getElementById('overlay-image');
+    const overlayLabel = document.getElementById('overlay-label');
+    const overlayDescription = document.getElementById('overlay-description');
+
+    // Mouse move handler for hover detection
+    function onMouseMove(event) {
+      // Calculate mouse position in normalized device coordinates
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // Update raycaster
+      raycaster.setFromCamera(mouse, camera);
+
+      // Check for intersections with event markers
+      const intersects = raycaster.intersectObjects(
+        eventMarkers.map(marker => marker.userData.dotMesh),
+        false
+      );
+
+      if (intersects.length > 0) {
+        const intersectedMarker = eventMarkers.find(
+          marker => marker.userData.dotMesh === intersects[0].object
+        );
+
+        if (intersectedMarker && intersectedMarker.userData.eventData.clickable) {
+          if (hoveredEvent !== intersectedMarker) {
+            hoveredEvent = intersectedMarker;
+            showOverlay(intersectedMarker.userData.eventData, event.clientX, event.clientY);
+            document.body.style.cursor = 'pointer';
+          } else {
+            // Update overlay position as mouse moves
+            updateOverlayPosition(event.clientX, event.clientY);
+          }
+        }
+      } else {
+        if (hoveredEvent) {
+          hideOverlay();
+          hoveredEvent = null;
+          document.body.style.cursor = 'default';
+        }
+      }
+    }
+
+    // Show overlay with event data
+    function showOverlay(eventData, x, y) {
+      overlayImage.src = eventData.image;
+      overlayLabel.textContent = eventData.label;
+      overlayDescription.textContent = eventData.description;
+
+      updateOverlayPosition(x, y);
+      overlay.classList.add('visible');
+    }
+
+    // Update overlay position
+    function updateOverlayPosition(x, y) {
+      const offsetX = 20;
+      const offsetY = 20;
+
+      // Check if overlay would go off screen
+      const overlayRect = overlay.getBoundingClientRect();
+      let finalX = x + offsetX;
+      let finalY = y + offsetY;
+
+      // Adjust if going off right edge
+      if (finalX + overlayRect.width > window.innerWidth) {
+        finalX = x - overlayRect.width - offsetX;
+      }
+
+      // Adjust if going off bottom edge
+      if (finalY + overlayRect.height > window.innerHeight) {
+        finalY = y - overlayRect.height - offsetY;
+      }
+
+      overlay.style.left = finalX + 'px';
+      overlay.style.top = finalY + 'px';
+    }
+
+    // Hide overlay
+    function hideOverlay() {
+      overlay.classList.remove('visible');
+    }
+
+    // Add mouse move listener
+    window.addEventListener('mousemove', onMouseMove);
+
+    // Animate light rays (billboard effect to face camera + pulsing)
+    function animateLightrays() {
+      const time = Date.now() * 0.001;
+
+      // Update matrices to ensure correct coordinate transformation
+      globeGroup.updateMatrixWorld();
+
+      eventMarkers.forEach((marker, index) => {
+        const lightray = marker.userData.lightrayMesh;
+        const normal = marker.userData.normal;
+
+        if (lightray && normal) {
+          // Calculate world position and normal
+          // We need the world normal to use as the up vector for lookAt
+          // Since the globe rotates, the normal direction in world space changes
+          const worldNormal = normal.clone().applyQuaternion(globeGroup.quaternion);
+
+          // Get vector from position to camera to determine viewing angle
+          const worldPosition = new THREE.Vector3();
+          lightray.getWorldPosition(worldPosition);
+          const viewVector = camera.position.clone().sub(worldPosition).normalize();
+
+          // Calculate alignment (dot product)
+          // 1.0 means looking directly down the ray, 0.0 means from side
+          const alignment = Math.abs(viewVector.dot(worldNormal));
+
+          // Calculate scale factor: reduce size as we look more directly down the ray
+          // Using a power function to make the transition smoother/steeper
+          // scale = 0 when alignment is 1 (top down), scale = 1 when alignment is 0 (side view)
+          const scaleFactor = Math.max(0, Math.sqrt(1.0 - alignment * alignment));
+
+          // Apply scale
+          lightray.scale.setScalar(scaleFactor);
+
+          // Set up vector to world normal so the ray points radially outward
+          // If the texture looks upside down, we might need to negate this
+          lightray.up.copy(worldNormal);
+
+          // Look at camera (in world space)
+          lightray.lookAt(camera.position);
+
+          // Subtle pulsing effect on opacity
+          // Also fade out opacity when scaling down to hide artifacts completely
+          // Apply scale with filter animation factor
+          lightray.scale.setScalar(scaleFactor * marker.userData.animationScale);
+
+          // Set up vector to world normal so the ray points radially outward
+          // If the texture looks upside down, we might need to negate this
+          lightray.up.copy(worldNormal);
+
+          // Look at camera (in world space)
+          lightray.lookAt(camera.position);
+
+          // Subtle pulsing effect on opacity
+          // Also fade out opacity when scaling down to hide artifacts completely
+          lightray.material.opacity = (0.6 + Math.sin(time * 2 + index) * 0.2) * scaleFactor * marker.userData.animationScale;
+
+          // Also handle dot opacity
+          if (marker.userData.dotMesh) {
+            marker.userData.dotMesh.material.opacity = marker.userData.animationScale;
+          }
+        }
+      });
+    }
+
+    // Stars background
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.7,
+      sizeAttenuation: true
+    });
+
+    const starsVertices = [];
+    for (let i = 0; i < 10000; i++) {
+      const x = (Math.random() - 0.5) * 2000;
+      const y = (Math.random() - 0.5) * 2000;
+      const z = (Math.random() - 0.5) * 2000;
+      starsVertices.push(x, y, z);
+    }
+
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Rotate globe slowly
+      // globeGroup.rotation.y += 0.001;
+
+      // Animate light rays
+      animateLightrays();
+
+      // Update controls
+      controls.update();
+
+      // Render
+      renderer.render(scene, camera);
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start animation
+    animate();
+
+    // GSAP Animation and Interaction Logic
+    let isAnimating = false;
+
+    // Load GSAP
+    const gsapScript = document.createElement('script');
+    gsapScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+    gsapScript.onload = () => {
+      console.log('GSAP Loaded');
+    };
+    document.head.appendChild(gsapScript);
+
+    // Overlay Elements
+    const projectModal = document.getElementById('project-modal');
+    const minimalOverlay = document.getElementById('minimal-overlay');
+    const closeButtons = document.querySelectorAll('.modal-close, .minimal-close');
+
+    // Close Modal Logic
+    function closeOverlays() {
+      if (isAnimating) return;
+
+      // Animate closing
+      if (projectModal.classList.contains('active')) {
+        projectModal.classList.remove('active');
+      }
+      if (minimalOverlay.classList.contains('active')) {
+        minimalOverlay.classList.remove('active');
+      }
+
+      // Reset camera to default position
+      const targetPos = new THREE.Vector3(0, 0, 3);
+
+      gsap.to(camera.position, {
+        duration: 1.5,
+        x: targetPos.x,
+        y: targetPos.y,
+        z: targetPos.z,
+        ease: "power2.inOut",
+        onComplete: () => {
+          controls.enabled = true;
+          isAnimating = false;
+        }
+      });
+
+      gsap.to(controls.target, {
+        duration: 1.5,
+        x: 0,
+        y: 0,
+        z: 0,
+        ease: "power2.inOut"
+      });
+    }
+
+    closeButtons.forEach(btn => btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent click from bubbling to canvas
+      closeOverlays();
+    }));
+
+    // Handle Click on Globe
+    window.addEventListener('click', (event) => {
+      if (isAnimating) return;
+
+      // Check if we clicked on an overlay or close button
+      if (event.target.closest('.project-modal') ||
+        event.target.closest('.minimal-overlay') ||
+        event.target.closest('.modal-close') ||
+        event.target.closest('.minimal-close')) {
+        return;
+      }
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+
+      const intersects = raycaster.intersectObjects(
+        eventMarkers.map(marker => marker.userData.dotMesh),
+        false
+      );
+
+      if (intersects.length > 0) {
+        const intersectedMarker = eventMarkers.find(
+          marker => marker.userData.dotMesh === intersects[0].object
+        );
+
+        if (intersectedMarker && intersectedMarker.userData.eventData.clickable) {
+          handleEventClick(intersectedMarker);
+        }
+      }
+    });
+
+    function handleEventClick(marker) {
+      if (!window.gsap) return;
+
+      isAnimating = true;
+      controls.enabled = false;
+      document.body.style.cursor = 'default';
+      hideOverlay(); // Hide the tooltip overlay
+
+      const eventData = marker.userData.eventData;
+      const normal = marker.userData.normal;
+
+      // 1. Rotate Globe/Camera to center the point
+      // Instead of rotating the globe, we move the camera to align with the point's normal
+      // The camera should position itself along the normal vector, at a certain distance
+
+      // Provide a target distance for the "zoom"
+      const targetDistance = 1.2; // Very close to surface (Radius is 1)
+      const hoverDistance = 2.5;  // Intermediate distance for rotation
+
+      // Current camera position
+      const startPos = camera.position.clone();
+
+      // Calculate target camera position (aligned with normal)
+      // We want to be in front of the point
+      // The normal is in local space, we need world space if the globe was rotating, 
+      // but here globeGroup is at 0,0,0 and usually not rotated by script (unless autoRotate is on).
+      // If globe is rotated, we need to account for it.
+
+      // We must get the world normal of the marker
+      const worldNormal = normal.clone().applyQuaternion(globeGroup.quaternion).normalize();
+
+      const targetPosHover = worldNormal.clone().multiplyScalar(hoverDistance);
+      const targetPosZoom = worldNormal.clone().multiplyScalar(targetDistance);
+
+      // Animation Sequence
+      const tl = gsap.timeline({
+        onComplete: () => {
+          openEventContent(eventData);
+        }
+      });
+
+      // Step 1: Rotate/Move Camera to face the point (at a distance)
+      tl.to(camera.position, {
+        duration: 1.2,
+        x: targetPosHover.x,
+        y: targetPosHover.y,
+        z: targetPosHover.z,
+        ease: "power2.inOut",
+        onUpdate: () => camera.lookAt(0, 0, 0) // Keep looking at center
+      });
+
+      // Step 2: Zoom in directly
+      tl.to(camera.position, {
+        duration: 1.0,
+        x: targetPosZoom.x,
+        y: targetPosZoom.y,
+        z: targetPosZoom.z,
+        ease: "power2.out",
+        onUpdate: () => camera.lookAt(0, 0, 0)
+      }, "-=0.2"); // Overlap slightly
+    }
+
+    function openEventContent(eventData) {
+      // Determine type and open appropriate overlay
+      if (eventData instanceof EventObject) {
+        openProjectModal(eventData);
+      } else {
+        openMinimalOverlay(eventData);
+      }
+    }
+
+    function openProjectModal(data) {
+      const modal = document.getElementById('project-modal');
+      const img = modal.querySelector('.modal-image');
+      const title = modal.querySelector('.modal-title');
+      const desc = modal.querySelector('.modal-description');
+      const number = modal.querySelector('.modal-number');
+
+      img.src = data.image;
+      title.textContent = data.label;
+      desc.textContent = data.description;
+      number.textContent = data.date;
+
+      modal.classList.add('active');
+      isAnimating = false; // logic continues in modal
+    }
+
+    function openMinimalOverlay(data) {
+      const overlay = document.getElementById('minimal-overlay');
+      const contentContainer = overlay.querySelector('.minimal-content-container');
+
+      // Clear previous content
+      contentContainer.innerHTML = '';
+
+      // Add Header
+      const header = document.createElement('div');
+      header.className = 'minimal-header';
+      header.innerHTML = `
+            <div class="minimal-date">${data.date}</div>
+            <h2 class="minimal-title">${data.label}</h2>
+        `;
+      contentContainer.appendChild(header);
+
+      // Add Content Items (Image + Text)
+      if (data.content && Array.isArray(data.content)) {
+        data.content.forEach(item => {
+          const section = document.createElement('div');
+          section.className = 'minimal-section';
+
+          if (item.image) {
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.className = 'minimal-image';
+            section.appendChild(img);
+          }
+
+          if (item.text) {
+            const p = document.createElement('p');
+            p.textContent = item.text;
+            p.className = 'minimal-text';
+            section.appendChild(p);
+          }
+          contentContainer.appendChild(section);
+        });
+      }
+
+      overlay.classList.add('active');
+      isAnimating = false;
+    }
+
+    // Filter Logic
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    let currentFilter = 'all';
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const filter = e.target.dataset.filter;
+        if (filter === currentFilter || isAnimating) return;
+
+        // Update UI
+        filterButtons.forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+
+        currentFilter = filter;
+        applyFilter(filter);
+      });
+    });
+
+    function applyFilter(category) {
+      if (!window.gsap) return;
+
+      isAnimating = true;
+      controls.enabled = false;
+      document.body.style.cursor = 'default';
+      hideOverlay();
+
+      // Animation Sequence
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          controls.enabled = true;
+        }
+      });
+
+      // 1. Shrink all currently visible
+      // We animate the 'animationScale' property in userData
+      const markersToHide = eventMarkers.filter(m => m.visible);
+
+      // Create a proxy object to animate since we can't animate userData directly in bulk easily without a loop
+      // Actually we can use gsap to animate a value and update in onUpdate
+
+      const animParams = { scale: 1.0, zoom: 3 }; // current scale of visible items
+
+      // Step 1: Shrink rays and Fade dots
+      tl.to(eventMarkers.map(m => m.userData), {
+        duration: 0.8,
+        animationScale: 0,
+        ease: "power2.inOut"
+      });
+
+      // Step 2: Zoom Camera In
+      // Move camera closer to look at earth
+      tl.to(camera.position, {
+        duration: 1.0,
+        z: 1.8,
+        ease: "power2.inOut",
+        onUpdate: () => camera.lookAt(0, 0, 0)
+      }, "-=0.4");
+
+      // Step 3: Zoom Camera Out & Swap Visibility
+      tl.to(camera.position, {
+        duration: 1.0,
+        z: 3,
+        ease: "power2.inOut",
+        onUpdate: () => camera.lookAt(0, 0, 0),
+        onStart: () => {
+          // This runs at the START of the zoom out (which is point of max zoom in)
+          // Ideally we swap visibility exactly when zoomed in
+          updateVisibility(category);
+        }
+      });
+
+      // Step 4: Expand new items
+      // We need to target only the ones that are now supposed to be visible
+      // Since we just updated visibility, we can target all eventMarkers.userData again 
+      // but we only want to scale up the ones that MATCH the filter
+      // However, easier to just animate ALL to 1, but hidden ones won't be seen anyway?
+      // No, hidden ones have visible = false, so they won't render.
+      // So animating userData.animationScale to 1 for everyone works, 
+      // provided we set visible=false for the filters we don't want.
+
+      tl.to(eventMarkers.map(m => m.userData), {
+        duration: 0.8,
+        animationScale: 1,
+        ease: "power2.out",
+        delay: -0.5 // Start expanding while still zooming out slightly
+      });
+    }
+
+    function updateVisibility(category) {
+      eventMarkers.forEach(marker => {
+        const type = marker.userData.eventData.constructor.name;
+        let shouldShow = false;
+
+        if (category === 'all') {
+          shouldShow = true;
+        } else if (category === 'object') {
+          shouldShow = (type === 'EventObject');
+        } else if (category === 'society') {
+          shouldShow = (type === 'EventRegion' || type === 'EventEthnicGroup');
+        }
+
+        marker.visible = shouldShow;
+        // Reset scale if it was hidden so it can animate up
+        // Actually, the timeline animates animationScale 0 -> 1 for EVERYONE
+        // So we don't need to manually reset here, GSAP will handle the expansion phase
+      });
+    }
+  </script>
+</body>
+
+</html>
