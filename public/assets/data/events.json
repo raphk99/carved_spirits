@@ -1,0 +1,145 @@
+[
+  {
+    "id": "pende",
+    "type": "ethnic_group",
+    "label": "Pende People",
+    "date": "2024-05",
+    "coordinatesList": [
+      { "lat": -5.0, "lon": 18.5 }
+    ],
+    "content": [
+      {
+        "text": "Pende are a Bantu ethnic group primarily in southwestern DR Congo, known for rich mask‐making traditions and matrilineal ties.",
+        "image": "./assets/ethnic/pende.jpg"
+      }
+    ],
+    "tags": ["Mask", "Ritual", "Character", "Portrait"]
+  },
+  {
+    "id": "luba",
+    "type": "ethnic_group",
+    "label": "Baluba (Luba) People",
+    "date": "2024-05",
+    "coordinatesList": [
+      { "lat": -6.0, "lon": 23.5 }
+    ],
+    "content": [
+      {
+        "text": "The Baluba or Luba are a large Bantu ethnolinguistic group in south-central DR Congo with many subgroups.",
+        "image": "./assets/ethnic/luba.jpg"
+      }
+    ],
+    "tags": ["Sculpture", "Royal", "Detail", "Texture"]
+  },
+  {
+    "id": "bamileke",
+    "type": "ethnic_group",
+    "label": "Bamiléké People",
+    "date": "2024-05",
+    "coordinatesList": [
+      { "lat": 5.3, "lon": 10.5 }
+    ],
+    "content": [
+      {
+        "text": "The Bamiléké inhabit the Grassfields of the West and Northwest Regions of Cameroon and include many related chiefdoms and languages.",
+        "image": "./assets/ethnic/bamileke.jpg"
+      }
+    ],
+    "tags": ["Beadwork", "Royal", "Pattern", "Geometric"]
+  },
+  {
+    "id": "igbo",
+    "type": "ethnic_group",
+    "label": "Igbo People",
+    "date": "2024-05",
+    "coordinatesList": [
+      { "lat": 6.5, "lon": 7.5 }
+    ],
+    "content": [
+      {
+        "text": "The Igbo are a major West African ethnic group predominantly in southeastern Nigeria, with communities in neighboring states and diaspora.",
+        "image": "./assets/ethnic/igbo.jpg"
+      }
+    ],
+    "tags": ["Mask", "Spirit", "Whiteface", "Dualism"]
+  },
+  {
+    "id": "dan",
+    "type": "ethnic_group",
+    "label": "Dan People",
+    "date": "2024-05",
+    "coordinatesList": [
+      { "lat": 7.4, "lon": -7.5 },
+      { "lat": 6.9, "lon": -9.5 }
+    ],
+    "content": [
+      {
+        "text": "The Dan (also called Yacouba or Gio) are a Mande people in northwestern Ivory Coast and adjacent Liberia known for mask rituals and forest culture.",
+        "image": "./assets/ethnic/dan.jpg"
+      }
+    ],
+    "tags": ["Mask", "Forest", "Idealized", "Organic"]
+  },
+  {
+    "id": "bambara",
+    "type": "ethnic_group",
+    "label": "Bambara People",
+    "date": "2024-05",
+    "coordinatesList": [
+      { "lat": 12.6, "lon": -8.0 },
+      { "lat": 11.4, "lon": -5.4 }
+    ],
+    "content": [
+      {
+        "text": "The Bambara (Banmana) are a major Mandé ethnic group of West Africa, especially central Mali along the Niger River, with populations in surrounding Sahelian states.",
+        "image": "./assets/ethnic/bambara.jpg"
+      }
+    ],
+    "tags": ["Chiwara", "Antelope", "Agriculture", "Abstract"]
+  },
+  {
+    "id": "ancient-temple",
+    "type": "object",
+    "label": "Ancient Temple Discovery",
+    "date": "2024-01",
+    "coordinates": { "lat": 40.7128, "lon": -74.0060 },
+    "image": "./assets/earth/bg.jpg",
+    "description": "A remarkable temple from 3000 BCE discovered beneath the city.",
+    "tags": ["Archaeology", "Temple", "History"]
+  },
+  {
+    "id": "sacred-mountain",
+    "type": "region",
+    "label": "Sacred Mountain Site",
+    "date": "2024-02",
+    "coordinates": { "lat": 51.5074, "lon": -0.1278 },
+    "content": [
+      { "text": "Ancient meditation site used by monks for centuries.", "image": "./assets/earth/clouds.jpg" }
+    ],
+    "tags": ["Nature", "Spirituality", "Mountain"]
+  },
+  {
+    "id": "historical-monument",
+    "type": "object",
+    "label": "Historical Monument",
+    "date": "2024-03",
+    "coordinates": { "lat": 35.6762, "lon": 139.6503 },
+    "image": "./assets/earth/bg.jpg",
+    "description": "Important cultural heritage site from the Edo period.",
+    "tags": ["History", "Monument", "Culture"]
+  },
+  {
+    "id": "ancient-civilization",
+    "type": "ethnic_group",
+    "label": "Ancient Civilization Traces",
+    "date": "2024-04",
+    "coordinatesList": [
+      { "lat": -33.8688, "lon": 151.2093 },
+      { "lat": -31.9505, "lon": 115.8605 }
+    ],
+    "content": [
+      { "text": "Recently excavated ruins revealing ancient civilization.", "image": "./assets/earth/clouds.jpg" }
+    ],
+    "tags": ["Archaeology", "Ruins", "Civilization"]
+  }
+]

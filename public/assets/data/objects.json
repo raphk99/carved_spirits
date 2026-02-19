@@ -1,0 +1,86 @@
+[
+  {
+    "id": "1",
+    "number": "01",
+    "title": "Bekom Mask",
+    "description": "This specific mask comes from the highlands of Western Cameroon, specifically from the Bekom chiefdom. People call this one a \"cap mask\" because of the way it’s worn, it sits horizontally on the head and doesn't even have eyeholes. It’s pretty unique. Its whole purpose is tied to various traditional ceremonies, especially the ones focused on fertility and honoring the original ancestors who started everything. It’s their way of staying connected to where they came from.",
+    "tags": ["Cameroon", "Bamileke", "Bekom"]
+  },
+  {
+    "id": "2",
+    "number": "02",
+    "title": "Mbangu Mask",
+    "description": "In the Kasaï region of the Democratic Republic of the Congo, the Pende people are famous for some pretty remarkable masks, but the Mbangu is easily one of the most unique. It represents the kind of suffering you get from sorcery or illness, and that twisted face—usually split between black and white—makes it stand out immediately. It’s a lot more than just something to look at, though; it’s a tool for spiritual and social work.\n\nFor the Pende, the Mbangu is mostly about healing. During ceremonies, a dancer would wear it to act out the illness or pain. The mask basically acted like a container, drawing the sickness into itself so it could be kicked out of the person and the community. It was all about settling the pain and getting things back into balance.\n\nEven though it looks a bit unsettling, the Mbangu was also used for a bit of social commentary. Those exaggerated features were a way to poke fun at people's flaws or bad behavior in a humorous, indirect way. It kept everyone in check while making them think.\n\nThe mask was also seen as a shield against bad vibes. By personifying deformity and sickness, the Mbangu would attract those negative forces just to neutralize them, protecting the village from spells or malevolent energy.\n\nThe black and white colors are there to show how opposites exist together—good and evil, health and sickness, beauty and ugliness. It’s a reflection of how complicated life is and how you have to find an equilibrium. Finally, the Mbangu played a big part in initiation rites for young men. It represented the tough challenges life throws at you and, more importantly, the fact that you can actually overcome them.",
+    "tags": ["Kasaï", "DR Congo", "Pende"]
+  },
+  {
+    "id": "3",
+    "number": "03",
+    "title": "Songye Mask",
+    "description": "The kifwebe cult gets its name from the Songye word for \"mask.\" It started around the turn of the last century, mainly to keep some social order. These masks vary a lot in shape and color depending on who they’re supposed to be, and they show up everywhere—from funerals and secret society initiations to healing rituals and warding off enemies.\n\nYou can usually tell the difference between the spirits they represent. Male masks (kilume) have these high crests for wisdom and are covered in red, black, and white stripes. They’re meant to be the dominant ones who enforce the rules. Female masks (kikashi) are usually white, which connects them to the moon, and they’re often larger with no crest at all. They represent balance and kindness, and you can sometimes see surface scratches that look like scarification.\n\nEven though all the dancers are men, they use these different styles to play out different roles. In Luba traditions, the fertility dances happen during the new moon, often alongside mankishi figures. Most masks have holes along the edges for long fiber beards, but if those holes are missing, they’re called Kabemba, or \"hawks.\" It’s a whole system of symbols just to tell a story or keep the peace.",
+    "tags": ["DR Congo", "Songye", "Luba"]
+  },
+  {
+    "id": "4",
+    "number": "04",
+    "title": "Ngbaka Mask",
+    "description": "This one, from the Ngbaka people of the Ubangi region, in the North of DR Congo. It’s almost certainly tied to an initiation rituals, mostly as a way of showing that someone actually finished the whole thing.",
+    "tags": ["DR Congo", "Ngbaka"]
+  },
+  {
+    "id": "5",
+    "number": "05",
+    "title": "Gouro Mask",
+    "description": "The Gouro people live over in West Africa, mostly in the center-west part of Côte d'Ivoire around places like Bouaflé and Sinfra. Their dances are basically split into two groups: the sacred ones—like Djè or Loh—and the ones they do just for the fun of it, for celebrations. You might see masks at these dances, or you might not; it depends on the occasion.\n\nAmong the celebration dances, they have a bunch of different ones like the Djéla or the Flaly, but the big name everyone knows is the Zaouli. That name actually covers three things at once: the mask, the costume, and the whole traditional dance itself.\n\nThen you’ve got the Flaly, which is a mask with a woman’s face from the town of Gohitafla. It looks a lot like the Zaouli mask, but it’s got toucan feathers on it, which gives it its own look.\n\nYeah ok i didn't find what kind of mask it exactly is but i will soon enough ¯\\_(ツ)_/¯",
+    "tags": ["Gouro", "Ivory Coast"]
+  },
+  {
+    "id": "6",
+    "number": "06",
+    "title": "Ogbodo enyi Mask",
+    "description": "In Southeast Nigeria, the Igbo people have created a huge, diverse variety of masks. Like most places in Africa, wearing them is strictly for the men. But there was this one time in 1975, in the village of Izzi, where an oracle actually suggested a woman should wear a mask like this several times a year to stop a tragic wave of infant deaths.\n\nThis one is an elephant spirit. There’s a human head called an ntekpe popping out of the back, which marks it as either a \"child of the spirit\" or the spirit of a notable person. When these masks come out, it’s a sign that the ancestors are present—and they’re the ones responsible for the well-being of the living. Unlike most masks that move in packs, the ogbodo enyi performs solo, following a hierarchy based on age.\n\nIt mixes human and elephant features and usually shows up during the dry season when the community has been purified and the paths are clear. It also makes an appearance at funerals for members of the specific age group it represents. Originally, the Ogbodo enyi character was pretty violent, roaming the village in a massive raffia robe and shouting threats. Nowadays, it’s much more benevolent, visiting the community to receive prayers and offerings. Some people also call these striking pieces \"Wawa\" masks.",
+    "tags": ["Nigeria", "Igbo"]
+  },
+  {
+    "id": "7",
+    "number": "07",
+    "title": "We Gere Mask",
+    "description": "Made of wood, horns, cowrie shells, hair, spent cartridges, and teeth.",
+    "tags": ["Ivory Coast", "Liberia", "Dan"]
+  },
+  {
+    "id": "8",
+    "number": "08",
+    "title": "Pende Gikhoko Pendant",
+    "description": "Back in the day, if you were a \"somebody\"—like the son of a chief or a big-shot notable—you’d get one of these after finishing the mukanda rites. It’s a whole initiation thing. Along with the pendant, you’d get a givule, which is supposed to be a piece of an ancestor’s soul.\nThey carved them out of bone or ivory to show that these kids were finally men, inheriting all this spiritual and political weight.",
+    "tags": ["DR Congo", "Pende"]
+  },
+  {
+    "id": "9",
+    "number": "09",
+    "title": "Dan Mask",
+    "description": "Scared women's face",
+    "tags": ["Ivory Coast", "Liberia", "Dan"]
+  },
+  {
+    "id": "10",
+    "number": "10",
+    "title": "Nsembu Mask",
+    "description": "A culturally important ritual for the Kumu people is the circumcision of boys as they enter adulthood.  The nsembu mask is used exclusively by members of the Nkunda Secret Society for the purposes of adult initiation. They also use the mask for divination under the effects of hallucinogens.  The mask itself represents the diviner’s spirit.  Kumu masks are somewhat rare, but the known examples tend to have wide open eyes and mouths, frequently with sharp teeth.",
+    "tags": ["DR Congo", "Kumu"]
+  },
+  {
+    "id": "11",
+    "number": "11",
+    "title": "Salampasu Mask",
+    "description": "These masks really come out for the initiation rites. For the big event, they set up a wooden stage with panels that have these carvings of people on them. The faces on those panels use the exact same design as the masks, which is a pretty cool touch. You see that same look on a few rare painted statues too.\nAlso, the Salampasu people are incredibly talented when it comes to metalwork. They’re basically master blacksmiths, and they really know how to handle a forge. It’s one of those things they’re just naturally great at.",
+    "tags": ["DR Congo", "Salampasu"]
+  },
+  {
+    "id": "12",
+    "number": "12",
+    "title": "Muminia Mask",
+    "description": "The Lega people originally came from Uganda further to the Northeast, and they were likely the first ones to settle in the Umaniema region of the Congo. Their whole political and religious world is run by the Bwami association. It’s pretty specific to them, even though you see similar groups with different names in other nearby tribes.\n\nThis particular mask is a muminia type. Each community only ever had one of them, which is a big deal. For any initiation to any grade to actually happen, the muminia had to be there. It’s the mask they use for the very first Bwami initiation, and it represents a bit of a contradiction—it stands for a high-ranking, powerful member of the association, but also a troublemaker. It’s got a bit of both in it.",
+    "tags": ["DR Congo", "Lega", "Bwami"]
+  }
+]

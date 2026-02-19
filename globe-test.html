@@ -363,10 +363,8 @@
   <div id="canvas-container"></div>
 
   <div id="info">
-    <h1>Earth Globe 2050</h1>
-    <p>Drag to rotate • Scroll to zoom<br>
-      Country outlines displayed<br>
-      Inspired by 2050.earth</p>
+    <h1>Earth Globe</h1>
+    <p>Drag to rotate • Scroll to zoom<br></p>
   </div>
 
   <div id="filter-container">
@@ -655,216 +653,152 @@
       }
     }
 
-    // Sample event data
-    const eventsData = [
-      // Pende people (Democratic Republic of the Congo)
-new EventEthnicGroup(
-  "Pende People",
-  "2024-05",
-  [ { lat: -5.0, lon: 18.5 } ], // Approx central DRC Kwilu/Kasai region
-  [
-    {
-      text: "Pende are a Bantu ethnic group primarily in southwestern DR Congo, known for rich mask‐making traditions and matrilineal ties.",
-      image: "./assets/ethnic/pende.jpg"
-    }
-  ]
-),
-
-// Baluba / Luba people (DR Congo)
-new EventEthnicGroup(
-  "Baluba (Luba) People",
-  "2024-05",
-  [ { lat: -6.0, lon: 23.5 } ], // Approx central/southern DRC Luba region
-  [
-    {
-      text: "The Baluba or Luba are a large Bantu ethnolinguistic group in south-central DR Congo with many subgroups.",
-      image: "./assets/ethnic/luba.jpg"
-    }
-  ]
-),
-
-// Bamiléké people (Cameroon)
-new EventEthnicGroup(
-  "Bamiléké People",
-  "2024-05",
-  [ { lat: 5.3, lon: 10.5 } ], // Western highlands Cameroon
-  [
-    {
-      text: "The Bamiléké inhabit the Grassfields of the West and Northwest Regions of Cameroon and include many related chiefdoms and languages.",
-      image: "./assets/ethnic/bamileke.jpg"
-    }
-  ]
-),
-
-// Igbo people (Nigeria and diasporas)
-new EventEthnicGroup(
-  "Igbo People",
-  "2024-05",
-  [ { lat: 6.5, lon: 7.5 } ], // Southeastern Nigeria approximate
-  [
-    {
-      text: "The Igbo are a major West African ethnic group predominantly in southeastern Nigeria, with communities in neighboring states and diaspora.",
-      image: "./assets/ethnic/igbo.jpg"
-    }
-  ]
-),
-
-// Dan people (Ivory Coast / Liberia)
-new EventEthnicGroup(
-  "Dan People",
-  "2024-05",
-  [
-    { lat: 7.4, lon: -7.5 }, // Ivory Coast (Man region)
-    { lat: 6.9, lon: -9.5 }  // Neighboring Liberia foothills
-  ],
-  [
-    {
-      text: "The Dan (also called Yacouba or Gio) are a Mande people in northwestern Ivory Coast and adjacent Liberia known for mask rituals and forest culture.",
-      image: "./assets/ethnic/dan.jpg"
-    }
-  ]
-),
-
-// Bambara people (Mali and wider West Africa)
-new EventEthnicGroup(
-  "Bambara People",
-  "2024-05",
-  [
-    { lat: 12.6, lon: -8.0 }, // Bamako / central Mali area
-    { lat: 11.4, lon: -5.4 }, // Sikasso / Bamana Sahel
-  ],
-  [
-    {
-      text: "The Bambara (Banmana) are a major Mandé ethnic group of West Africa, especially central Mali along the Niger River, with populations in surrounding Sahelian states.",
-      image: "./assets/ethnic/bambara.jpg"
-    }
-  ]
-),
-
-      new EventObject(
-        "Ancient Temple Discovery",
-        "2024-01",
-        { lat: 40.7128, lon: -74.0060 }, // New York
-        "./assets/earth/bg.jpg",
-        "A remarkable temple from 3000 BCE discovered beneath the city."
-      ),
-      new EventRegion(
-        "Sacred Mountain Site",
-        "2024-02",
-        { lat: 51.5074, lon: -0.1278 }, // London
-        [{ text: "Ancient meditation site used by monks for centuries.", image: "./assets/earth/clouds.jpg" }]
-      ),
-      new EventObject(
-        "Historical Monument",
-        "2024-03",
-        { lat: 35.6762, lon: 139.6503 }, // Tokyo
-        "./assets/earth/bg.jpg",
-        "Important cultural heritage site from the Edo period."
-      ),
-      new EventEthnicGroup(
-        "Ancient Civilization Traces",
-        "2024-04",
-        [{ lat: -33.8688, lon: 151.2093 }, { lat: -31.9505, lon: 115.8605 }], // Sydney and Perth
-        [{ text: "Recently excavated ruins revealing ancient civilization.", image: "./assets/earth/clouds.jpg" }]
-      )
-    ];
-
-    // Convert lat/lon to 3D position on sphere
-    function latLonToVector3(lat, lon, radius = 1) {
+    // Create Visual for Event
+    function createEventVisual(lat, lon, eventData) {
       const phi = (90 - lat) * (Math.PI / 180);
       const theta = (lon + 180) * (Math.PI / 180);
+      const radius = 1.0;
 
-      const x = -(radius * Math.sin(phi) * Math.cos(theta));
-      const z = radius * Math.sin(phi) * Math.sin(theta);
+      const x = -radius * Math.sin(phi) * Math.cos(theta);
       const y = radius * Math.cos(phi);
+      const z = radius * Math.sin(phi) * Math.sin(theta);
 
-      return new THREE.Vector3(x, y, z);
-    }
-
-    // Create event point with dot and light ray
-    function createEventVisual(lat, lon, eventData) {
-      const group = new THREE.Group();
-      const position = latLonToVector3(
-        lat,
-        lon,
-        1.01
-      );
-
-      // Get surface normal for orientation
+      const position = new THREE.Vector3(x, y, z);
       const normal = position.clone().normalize();
 
-      // Create dot marker
-      const dotTexture = textureLoader.load('./assets/earth/dot.png');
-      const dotGeometry = new THREE.PlaneGeometry(0.03, 0.03);
-      const dotMaterial = new THREE.MeshBasicMaterial({
-        map: dotTexture,
-        transparent: true,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      });
-
+      // Create Dot
+      const dotGeometry = new THREE.SphereGeometry(0.006, 16, 16);
+      const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
       const dotMesh = new THREE.Mesh(dotGeometry, dotMaterial);
       dotMesh.position.copy(position);
-      dotMesh.lookAt(position.clone().multiplyScalar(2));
-      group.add(dotMesh);
+      globeGroup.add(dotMesh);
 
-      // Create light ray with additive blending
-      const lightrayTexture = textureLoader.load('./assets/earth/lightray.jpg');
-      const lightrayGeometry = new THREE.PlaneGeometry(0.05, 0.3);
-      const lightrayMaterial = new THREE.MeshBasicMaterial({
-        map: lightrayTexture,
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
+      // Create Lightray (Beam)
+      // A vertical plane that uses billboarding to face camera
+      const rayHeight = 0.3;
+      const rayWidth = 0.02;
+      const geometry = new THREE.PlaneGeometry(rayWidth, rayHeight);
+      geometry.translate(0, rayHeight / 2, 0); // Pivot at bottom
+
+      // Simple gradient texture for beam
+      const canvas = document.createElement('canvas');
+      canvas.width = 32;
+      canvas.height = 64;
+      const context = canvas.getContext('2d');
+      const gradient = context.createLinearGradient(0, 0, 0, 64);
+      gradient.addColorStop(0, 'rgba(100, 200, 255, 0)');
+      gradient.addColorStop(0.8, 'rgba(100, 200, 255, 0.5)'); // Fade in near base
+      gradient.addColorStop(1, 'rgba(100, 200, 255, 0)');
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 32, 64);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
         side: THREE.DoubleSide,
-        opacity: 0.8
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        opacity: 0
       });
 
-      const lightrayMesh = new THREE.Mesh(lightrayGeometry, lightrayMaterial);
+      const lightrayMesh = new THREE.Mesh(geometry, material);
+      lightrayMesh.position.copy(position);
+      globeGroup.add(lightrayMesh);
 
-      // Position lightray offset from surface (center of the ray extending outward)
-      const offset = normal.clone().multiplyScalar(0.15);
-      lightrayMesh.position.copy(position.clone().add(offset));
-
-      // Orient lightray radially - the plane should stand perpendicular to the surface
-      // We want the plane to be vertical relative to the sphere surface
-      // quaternion.setFromUnitVectors aligns one vector to another
-      const up = new THREE.Vector3(0, 1, 0); // default "up" of the plane
-      const quaternion = new THREE.Quaternion();
-      quaternion.setFromUnitVectors(up, normal);
-      lightrayMesh.quaternion.copy(quaternion);
-
-      group.add(lightrayMesh);
-
-      // Store reference to event data and normal for animation
-      group.userData = {
-        eventData: eventData,
+      const markerData = {
         dotMesh: dotMesh,
         lightrayMesh: lightrayMesh,
+        normal: normal,
         eventData: eventData,
-        dotMesh: dotMesh,
-        lightrayMesh: lightrayMesh,
-        normal: normal.clone(), // Store the normal for rotation animation
-        animationScale: 1.0, // For filter animations
-        baseScale: 1.0 // Base scale for the marker
+        animationScale: 1.0
       };
 
-      globeGroup.add(group);
-      eventMarkers.push(group);
+      dotMesh.userData = markerData;
+      lightrayMesh.userData = markerData;
 
-      return group;
+      eventMarkers.push({
+        userData: markerData
+      });
     }
 
-    // Create all event points
-    eventsData.forEach(event => {
-      if (event instanceof EventEthnicGroup) {
-        event.coordinatesList.forEach(coord => {
-          createEventVisual(coord.lat, coord.lon, event);
+    // Sample event data
+    // Fetch and Load Events
+    async function loadEvents() {
+      console.log('Starting loadEvents...');
+      try {
+        const response = await fetch('assets/data/events.json');
+        console.log('Fetch response status:', response.status);
+        
+        if (!response.ok) {
+           throw new Error(`Failed to fetch events: ${response.statusText}`);
+        }
+        const events = await response.json();
+        console.log('Events parsed:', events);
+        
+        events.forEach((data, index) => {
+            console.log(`Processing event ${index}:`, data.label, data.type);
+            let eventInstance;
+            
+            if (data.type === 'ethnic_group') {
+                eventInstance = new EventEthnicGroup(
+                    data.label,
+                    data.date,
+                    data.coordinatesList,
+                    data.content
+                );
+                // Create visuals for each coordinate
+                if (data.coordinatesList) {
+                    data.coordinatesList.forEach(coord => {
+                        console.log('Creating visual for ethnic group at:', coord);
+                        createEventVisual(coord.lat, coord.lon, eventInstance);
+                    });
+                } else {
+                    console.warn('Missing coordinatesList for ethnic group:', data.label);
+                }
+            } else if (data.type === 'region') {
+                eventInstance = new EventRegion(
+                    data.label,
+                    data.date,
+                    data.coordinates,
+                    data.content
+                );
+                if (data.coordinates) {
+                    console.log('Creating visual for region at:', data.coordinates);
+                    createEventVisual(eventInstance.coordinates.lat, eventInstance.coordinates.lon, eventInstance);
+                } else {
+                    console.warn('Missing coordinates for region:', data.label);
+                }
+            } else {
+                // Default to object
+                eventInstance = new EventObject(
+                    data.label,
+                    data.date,
+                    data.coordinates,
+                    data.image,
+                    data.description
+                );
+                if (data.coordinates) {
+                    console.log('Creating visual for object at:', data.coordinates);
+                    createEventVisual(eventInstance.coordinates.lat, eventInstance.coordinates.lon, eventInstance);
+                } else {
+                     console.warn('Missing coordinates for object:', data.label);
+                }
+            }
         });
-      } else {
-        createEventVisual(event.coordinates.lat, event.coordinates.lon, event);
+        
+        console.log(`Loaded ${events.length} events from JSON. Total markers: ${eventMarkers.length}`);
+        
+        // Handle URL params after data is loaded
+        handleUrlParams();
+        
+      } catch (error) {
+        console.error('Error loading events:', error);
       }
-    });
+    }
+    
+    // Call the load function
+    loadEvents();
 
     // Raycaster for hover detection
     const raycaster = new THREE.Raycaster();
@@ -1398,6 +1332,49 @@ new EventEthnicGroup(
         // So we don't need to manually reset here, GSAP will handle the expansion phase
       });
     }
+
+    // Handle URL Parameters
+    function handleUrlParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tag = urlParams.get('tag');
+
+      if (tag) {
+        // Convert underscore back to space for searching, though search should be flexible
+        const searchTerm = tag.replace(/_/g, ' ').toLowerCase();
+        
+        // Find matching marker
+        const matchingMarker = eventMarkers.find(marker => {
+          const data = marker.userData.eventData;
+          // Search in label and content
+          const labelMatch = data.label.toLowerCase().includes(searchTerm);
+          
+          let contentMatch = false;
+          if (data.content && Array.isArray(data.content)) {
+             contentMatch = data.content.some(item => 
+               item.text && item.text.toLowerCase().includes(searchTerm)
+             );
+          }
+           
+           // Also check description if it exists
+           const descMatch = data.description && data.description.toLowerCase().includes(searchTerm);
+           
+           return labelMatch || contentMatch || descMatch;
+        });
+
+        if (matchingMarker) {
+          console.log(`Found match for tag "${tag}":`, matchingMarker.userData.eventData.label);
+          // Small delay to allow initialization
+          setTimeout(() => {
+             handleEventClick(matchingMarker);
+          }, 1000);
+        } else {
+          console.log(`No match found for tag "${tag}"`);
+        }
+      }
+    }
+
+    // Initialize
+    handleUrlParams();
   </script>
 </body>
 
