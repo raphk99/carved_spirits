@@ -3,17 +3,28 @@
     "id": "pende",
     "type": "ethnic_group",
     "label": "Pende People",
+    "subtitle": "Guardians of the Spirit Masks",
     "date": "2024-05",
     "coordinatesList": [
       { "lat": -5.0, "lon": 18.5 }
     ],
     "content": [
       {
-        "text": "Pende are a Bantu ethnic group primarily in southwestern DR Congo, known for rich mask‐making traditions and matrilineal ties.",
+        "subtitle": "Overview & Origins",
+        "text": "The Pende people (singular: Mupende; plural: Bapende, Bapindi) also known as the Phende people, are an ethnic group in the Democratic Republic of the Congo. The Pende are divided into two cultural groups: the Eastern Pende and the Western Pende who are distinct but consider themselves part of the same ethnic group. The number of people who consider themselves to be ethnically Pende is estimated at over 250,000.",
         "image": "./assets/ethnic/pende.jpg"
+      },
+      {
+        "subtitle": "Migration from Angola",
+        "text": "The Pende originally lived in the strip between the Atlantic Ocean and the Cuanza River, in modern-day Angola. Pende consider themselves to be the founder of Angola. Pende, wherever they live, have songs portraying the reasons of their departure from Angola to the DRCongo. Most importantly, after the death of their strong Queen NZINGA (Queen Nzinga of Ndongo and Matamba). Pende and Ambundu in Angola are same tribe; the group that migrated to Congo, DRC was named 'tupenzu-tupenzu,' that is where the name Phende. They migrated to their current region of the modern-day Democratic Republic of the Congo in around 1620 as a consequence of the expansion of the Kingdom of Lunda.[1] In around 1885, the powerful Chokwe ethnic group began expanding and gained control over the Eastern Pende but this period was brought to an end by the arrival of European colonists and the creation of the Congo Free State.",
+        "image": ""
+      },
+      {
+        "subtitle": "Social Structure & Art",
+        "text": "The Pende have a matrilineal culture and family kinship plays an important role in structuring social relations.[1] They traditionally practice a form of ancestor worship in which the ancestors (Mvumbi) are believed to affect prospects of success and failure in everyday life. The Pende traditionally speak their own language, known as Kipende, which is part of the Central Bantu group.[1] The Pende are particularly known for their art, which is complex and includes traditional masks, associated with initiation rituals.[1] Artists play an important role in society, they are looked at as just as important as nobles and receive a gift of having the first portion of food from the harvest. This privilege is usually only reserved for clan chiefs.",
+        "image": ""
       }
-    ],
-    "tags": ["Mask", "Ritual", "Character", "Portrait"]
+    ]
   },
   {
     "id": "luba",
@@ -25,16 +36,21 @@
     ],
     "content": [
       {
-        "text": "The Baluba or Luba are a large Bantu ethnolinguistic group in south-central DR Congo with many subgroups.",
+        "subtitle": "Overview & Origins",
+        "text": "The Luba people or Baluba are a Bantu ethno-linguistic group indigenous to the south-central region of the Democratic Republic of the Congo. The majority of them live in this country, residing mainly in Katanga, Kasaï, Kasaï-Oriental, Kasaï-Central, Lomami and Maniema. The Baluba consist of many sub-groups or clans. The Baluba developed a society and culture by about the 400s CE, later developing a well-organised community in the Upemba Depression known as the Baluba in Katanga confederation. Luba society consisted of miners, smiths, woodworkers, potters, crafters, and people of various other professions. They found relative success over time, but this eventually caused their gradual decline with the Portuguese and Omani empires led or influenced invasions.",
         "image": "./assets/ethnic/luba.jpg"
+      },
+      {
+        "subtitle": "Art & Culture",
+        "text": "Luba art is renowned for its sophisticated wood carvings, including masks, stools, and prestige objects. The Luba people have a rich oral tradition and complex spiritual beliefs, with a strong emphasis on ancestor veneration and the role of diviners in maintaining social harmony."
       }
-    ],
-    "tags": ["Sculpture", "Royal", "Detail", "Texture"]
+    ]
   },
   {
     "id": "bamileke",
     "type": "ethnic_group",
     "label": "Bamiléké People",
+    "subtitle": "Masters of the Grassfields",
     "date": "2024-05",
     "coordinatesList": [
       { "lat": 5.3, "lon": 10.5 }
@@ -44,8 +60,7 @@
         "text": "The Bamiléké inhabit the Grassfields of the West and Northwest Regions of Cameroon and include many related chiefdoms and languages.",
         "image": "./assets/ethnic/bamileke.jpg"
       }
-    ],
-    "tags": ["Beadwork", "Royal", "Pattern", "Geometric"]
+    ]
   },
   {
     "id": "igbo",
@@ -60,8 +75,7 @@
         "text": "The Igbo are a major West African ethnic group predominantly in southeastern Nigeria, with communities in neighboring states and diaspora.",
         "image": "./assets/ethnic/igbo.jpg"
       }
-    ],
-    "tags": ["Mask", "Spirit", "Whiteface", "Dualism"]
+    ]
   },
   {
     "id": "dan",
@@ -77,8 +91,7 @@
         "text": "The Dan (also called Yacouba or Gio) are a Mande people in northwestern Ivory Coast and adjacent Liberia known for mask rituals and forest culture.",
         "image": "./assets/ethnic/dan.jpg"
       }
-    ],
-    "tags": ["Mask", "Forest", "Idealized", "Organic"]
+    ]
   },
   {
     "id": "bambara",
@@ -94,18 +107,27 @@
         "text": "The Bambara (Banmana) are a major Mandé ethnic group of West Africa, especially central Mali along the Niger River, with populations in surrounding Sahelian states.",
         "image": "./assets/ethnic/bambara.jpg"
       }
-    ],
-    "tags": ["Chiwara", "Antelope", "Agriculture", "Abstract"]
+    ]
   },
   {
     "id": "ancient-temple",
     "type": "object",
     "label": "Ancient Temple Discovery",
+    "subtitle": "Lost Secrets of the Past",
     "date": "2024-01",
     "coordinates": { "lat": 40.7128, "lon": -74.0060 },
     "image": "./assets/earth/bg.jpg",
     "description": "A remarkable temple from 3000 BCE discovered beneath the city.",
-    "tags": ["Archaeology", "Temple", "History"]
+    "content": [
+      {
+        "subtitle": "The Discovery",
+        "text": "A remarkable temple from 3000 BCE discovered beneath the city during subway excavations."
+      },
+      {
+        "subtitle": "Significance",
+        "text": "This find challenges current timelines of early urban settlement in the region."
+      }
+    ]
   },
   {
     "id": "sacred-mountain",
@@ -115,8 +137,7 @@
     "coordinates": { "lat": 51.5074, "lon": -0.1278 },
     "content": [
       { "text": "Ancient meditation site used by monks for centuries.", "image": "./assets/earth/clouds.jpg" }
-    ],
-    "tags": ["Nature", "Spirituality", "Mountain"]
+    ]
   },
   {
     "id": "historical-monument",
@@ -125,8 +146,7 @@
     "date": "2024-03",
     "coordinates": { "lat": 35.6762, "lon": 139.6503 },
     "image": "./assets/earth/bg.jpg",
-    "description": "Important cultural heritage site from the Edo period.",
-    "tags": ["History", "Monument", "Culture"]
+    "description": "Important cultural heritage site from the Edo period."
   },
   {
     "id": "ancient-civilization",
@@ -139,7 +159,6 @@
     ],
     "content": [
       { "text": "Recently excavated ruins revealing ancient civilization.", "image": "./assets/earth/clouds.jpg" }
-    ],
-    "tags": ["Archaeology", "Ruins", "Civilization"]
+    ]
   }
 ]

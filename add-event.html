@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Event to Globe</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #000; color: #fff; display: flex; }
+    #canvas-container { flex: 1; height: 100vh; position: relative; }
+    
+    #sidebar {
+      width: 450px;
+      height: 100vh;
+      background: #111;
+      border-left: 1px solid #333;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    h2 { font-weight: 500; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    
+    label { font-size: 13px; color: #aaa; }
+    input, select, textarea {
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #666; outline: none; }
+    
+    .content-block {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      padding: 15px;
+      border-radius: 6px;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .content-block h4 { margin-bottom: 10px; color: #ddd; font-weight: 500;}
+    .remove-block {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: #f44336; color: white; border: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+
+    button {
+      background: #333; color: #fff; border: 1px solid #555;
+      padding: 10px 15px; border-radius: 4px; cursor: pointer;
+      font-weight: 500; transition: background 0.2s;
+    }
+    button:hover { background: #444; }
+    button.primary { background: #2563eb; border-color: #1d4ed8; }
+    button.primary:hover { background: #1d4ed8; }
+
+    #json-output {
+      height: 200px;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre;
+      background: #0a0a0a;
+    }
+    
+    #loading {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px; z-index: 5;
+    }
+    .hidden { display: none !important; }
+
+    #info {
+      position: absolute; top: 20px; left: 20px; z-index: 10;
+      background: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;
+      backdrop-filter: blur(10px); pointer-events: none;
+    }
+    #info h1 { font-size: 18px; margin-bottom: 5px; font-weight: 600;}
+    #info p { font-size: 13px; color: #aaa; }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container">
+    <div id="info">
+      <h1>Add Globe Event</h1>
+      <p>Click anywhere on the globe<br>to select coordinates.</p>
+    </div>
+    <div id="loading">Loading Earth...</div>
+  </div>
+
+  <div id="sidebar">
+    <h2>Event Details</h2>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>Latitude</label>
+        <input type="number" step="any" id="f-lat" placeholder="Click globe to set">
+      </div>
+      <div class="form-group">
+        <label>Longitude</label>
+        <input type="number" step="any" id="f-lon" placeholder="Click globe to set">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>ID (unique)</label>
+        <input type="text" id="f-id" placeholder="e.g. ancient-temple">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="f-type">
+          <option value="object">Object</option>
+          <option value="ethnic_group">Ethnic Group</option>
+          <option value="region">Region</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Label / Title</label>
+      <input type="text" id="f-label" placeholder="Main title">
+    </div>
+
+    <div class="form-group">
+      <label>Subtitle (Optional)</label>
+      <input type="text" id="f-subtitle" placeholder="Sub-heading">
+    </div>
+
+    <div class="form-group">
+      <label>Date / Year</label>
+      <input type="text" id="f-date" placeholder="e.g. 2024-05">
+    </div>
+
+    <div class="form-group" id="description-group">
+      <label>Base Description (For Object type hover)</label>
+      <textarea id="f-desc" rows="2" placeholder="Short description for hover box (max 150 chars usually)..."></textarea>
+    </div>
+    
+    <div class="form-group" id="main-image-group">
+        <label>Main Image (For Object type)</label>
+        <input type="text" id="f-image" placeholder="./assets/earth/bg.jpg">
+    </div>
+
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+      <h3 style="font-size: 15px; font-weight: 500;">Content Blocks</h3>
+      <button type="button" id="add-content-btn" style="padding: 5px 10px; font-size: 12px;">+ Add Block</button>
+    </div>
+
+    <div id="content-container">
+      <!-- Blocks go here -->
+    </div>
+
+    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #333; display: flex; flex-direction: column; gap: 10px;">
+      <button type="button" class="primary" id="generate-btn">Generate JSON</button>
+      <textarea id="json-output" readonly placeholder="Output will appear here..."></textarea>
+      <button type="button" id="copy-btn">Copy to Clipboard</button>
+    </div>
+
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- Globe Logic -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const canvasContainer = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
+    camera.position.z = 3;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    canvasContainer.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.05;
+    controls.minDistance = 1.1; controls.maxDistance = 5;
+    controls.enablePan = false;
+
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dl = new THREE.DirectionalLight(0xffffff, 1); dl.position.set(5, 3, 5); scene.add(dl);
+    const bl = new THREE.DirectionalLight(0x4488ff, 0.3); bl.position.set(-5, -3, -5); scene.add(bl);
+
+    const globeGroup = new THREE.Group();
+    scene.add(globeGroup);
+
+    const textureLoader = new THREE.TextureLoader();
+    const earthGeometry = new THREE.SphereGeometry(1, 128, 128);
+    
+    let texturesLoaded = 0;
+    function checkLoading() {
+      texturesLoaded++;
+      if (texturesLoaded >= 2) document.getElementById('loading').classList.add('hidden');
+    }
+
+    textureLoader.load('./assets/earth/earth_1.png', (tex) => {
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      const mat = new THREE.MeshPhongMaterial({ map: tex, shininess: 10, specular: 0x222222 });
+      globeGroup.add(new THREE.Mesh(earthGeometry, mat));
+      checkLoading();
+    }, undefined, () => {
+      globeGroup.add(new THREE.Mesh(earthGeometry, new THREE.MeshPhongMaterial({ color: 0x1a1a2e })));
+      checkLoading();
+    });
+
+    // Combine contours
+    function combineContourTextures() {
+      const img1 = new Image(); const img2 = new Image();
+      let loaded = 0; img1.crossOrigin = 'anonymous'; img2.crossOrigin = 'anonymous';
+      function onLoad() {
+        loaded++;
+        if (loaded === 2) {
+          const canvas = document.createElement('canvas');
+          canvas.width = img1.width * 2; canvas.height = img1.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img1, 0, 0, img1.width, img1.height);
+          ctx.drawImage(img2, img1.width, 0, img2.width, img2.height);
+          
+          const tex = new THREE.CanvasTexture(canvas);
+          tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, blending: THREE.NormalBlending, depthWrite: false, side: THREE.DoubleSide });
+          globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.003, 128, 128), mat));
+          checkLoading();
+        }
+      }
+      img1.onload = onLoad; img2.onload = onLoad;
+      img1.onerror = () => checkLoading(); img2.onerror = () => checkLoading();
+      img1.src = './assets/earth/contour1_1.png'; img2.src = './assets/earth/contour2_1.png';
+    }
+    combineContourTextures();
+
+    // Atmosphere
+    const atmMat = new THREE.ShaderMaterial({
+      vertexShader: `varying vec3 vNormal; void main() { vNormal = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      fragmentShader: `varying vec3 vNormal; void main() { float i = pow(0.6 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0); gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * i; }`,
+      blending: THREE.AdditiveBlending, side: THREE.BackSide, transparent: true
+    });
+    globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.15, 64, 64), atmMat));
+
+    // Stars
+    const starsGeo = new THREE.BufferGeometry();
+    const starsVerts = [];
+    for (let i = 0; i < 5000; i++) {
+        starsVerts.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000);
+    }
+    starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(starsVerts, 3));
+    scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({color: 0xffffff, size: 0.7})));
+
+    // Marker Logic
+    let currentMarker = null;
+
+    function setMarker(lat, lon) {
+      if (currentMarker) {
+        globeGroup.remove(currentMarker);
+      }
+      
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+      
+      const x = -(Math.sin(phi) * Math.cos(theta));
+      const y = Math.cos(phi);
+      const z = (Math.sin(phi) * Math.sin(theta));
+
+      const dotGeo = new THREE.SphereGeometry(0.015, 16, 16);
+      const dotMat = new THREE.MeshBasicMaterial({ color: 0xff3333, depthTest: false });
+      currentMarker = new THREE.Mesh(dotGeo, dotMat);
+      currentMarker.position.set(x, y, z);
+      globeGroup.add(currentMarker);
+    }
+
+    // Raycaster for clicking
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    canvasContainer.addEventListener('click', (event) => {
+      const rect = canvasContainer.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      
+      // We check intersection with the base earth geometry, not the group
+      const earthMesh = globeGroup.children.find(c => c.geometry && c.geometry.type === 'SphereGeometry' && c.geometry.parameters.radius === 1);
+
+      if (earthMesh) {
+          const intersects = raycaster.intersectObject(earthMesh);
+          if (intersects.length > 0) {
+              const p = intersects[0].point;
+              // Convert point to lat/lon
+              // Need to account for globe rotation if any, but globeGroup is at 0,0,0
+              p.normalize();
+              const lat = 90 - (Math.acos(p.y) * 180 / Math.PI);
+              let lon = (Math.atan2(p.z, -p.x) * 180 / Math.PI) - 180;
+              
+              // Normalize lon between -180 and 180
+              if (lon <= -180) lon += 360;
+
+              document.getElementById('f-lat').value = lat.toFixed(4);
+              document.getElementById('f-lon').value = lon.toFixed(4);
+              
+              setMarker(lat, lon);
+          }
+      }
+    });
+
+    // Handle Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+
+  <!-- UI Logic -->
+  <script>
+    // Toggle fields based on type
+    const typeSelect = document.getElementById('f-type');
+    typeSelect.addEventListener('change', () => {
+        const type = typeSelect.value;
+        const descGroup = document.getElementById('description-group');
+        const imgGroup = document.getElementById('main-image-group');
+        if (type === 'object') {
+            descGroup.style.display = 'flex';
+            imgGroup.style.display = 'flex';
+        } else {
+            descGroup.style.display = 'none';
+            imgGroup.style.display = 'none';
+        }
+    });
+
+    const contentContainer = document.getElementById('content-container');
+    const btnAdd = document.getElementById('add-content-btn');
+
+    let blockCounter = 0;
+    
+    function addContentBlock() {
+      blockCounter++;
+      const div = document.createElement('div');
+      div.className = 'content-block';
+      div.innerHTML = `
+        <button type="button" class="remove-block" onclick="this.parentElement.remove()">&times;</button>
+        <h4>Block ${blockCounter}</h4>
+        <div class="form-group">
+          <label>Subtitle</label>
+          <input type="text" class="c-subtitle" placeholder="Section subtitle (optional)">
+        </div>
+        <div class="form-group" style="margin-top: 5px;">
+          <label>Text / Paragraph</label>
+          <textarea class="c-text" rows="3" placeholder="Write paragraph here..."></textarea>
+        </div>
+        <div class="form-group" style="margin-top: 5px;">
+          <label>Image URL</label>
+          <input type="text" class="c-image" placeholder="./assets/ethnic/image.jpg (optional)">
+        </div>
+      `;
+      contentContainer.appendChild(div);
+    }
+
+    btnAdd.addEventListener('click', addContentBlock);
+    
+    // Add one by default
+    addContentBlock();
+
+    // Generation
+    document.getElementById('generate-btn').addEventListener('click', () => {
+        const lat = parseFloat(document.getElementById('f-lat').value);
+        const lon = parseFloat(document.getElementById('f-lon').value);
+        const id = document.getElementById('f-id').value.trim();
+        const type = document.getElementById('f-type').value;
+        const label = document.getElementById('f-label').value.trim();
+        const subtitle = document.getElementById('f-subtitle').value.trim();
+        const date = document.getElementById('f-date').value.trim();
+        
+        let output = {
+            id: id || "generated-id",
+            type: type,
+            label: label || "New Event",
+        };
+
+        if (subtitle) output.subtitle = subtitle;
+        if (date) output.date = date;
+
+        if (!isNaN(lat) && !isNaN(lon)) {
+            if (type === 'object' || type === 'region') {
+                output.coordinates = { lat: parseFloat(lat.toFixed(4)), lon: parseFloat(lon.toFixed(4)) };
+            } else if (type === 'ethnic_group') {
+                output.coordinatesList = [{ lat: parseFloat(lat.toFixed(4)), lon: parseFloat(lon.toFixed(4)) }];
+            }
+        }
+
+        if (type === 'object') {
+            const img = document.getElementById('f-image').value.trim();
+            const desc = document.getElementById('f-desc').value.trim();
+            if (img) output.image = img;
+            if (desc) output.description = desc;
+        }
+
+        const blocks = document.querySelectorAll('.content-block');
+        const contentArr = [];
+        
+        blocks.forEach(block => {
+            const cSub = block.querySelector('.c-subtitle').value.trim();
+            const cText = block.querySelector('.c-text').value.trim();
+            const cImg = block.querySelector('.c-image').value.trim();
+            
+            const obj = {};
+            if (cSub) obj.subtitle = cSub;
+            if (cText) obj.text = cText;
+            if (cImg) obj.image = cImg;
+            
+            if (Object.keys(obj).length > 0) {
+                contentArr.push(obj);
+            }
+        });
+
+        if (contentArr.length > 0) {
+            output.content = contentArr;
+        }
+
+        document.getElementById('json-output').value = JSON.stringify(output, null, 2) + ",";
+    });
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+        const output = document.getElementById('json-output');
+        output.select();
+        document.execCommand('copy');
+        
+        const btn = document.getElementById('copy-btn');
+        const originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => btn.textContent = originalText, 2000);
+    });
+
+  </script>
+</body>
+</html>

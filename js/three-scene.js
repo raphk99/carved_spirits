@@ -208,6 +208,7 @@ export class SceneManager {
     this.plyModels = [];
     
     if (this.renderer) {
+      this.renderer.forceContextLoss();
       this.renderer.dispose();
     }
     

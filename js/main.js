@@ -15,22 +15,47 @@ class ProjectManager {
     this.modal = document.getElementById('project-modal');
     this.modalCanvas = document.getElementById('modal-canvas');
     this.modalClose = document.querySelector('.modal-close');
+    this.observer = null;
     
     this.init();
   }
 
   init() {
-    // Initialize 3D scenes for each project card
     const projectCards = document.querySelectorAll('.project-card');
+
+    // Lazily create/destroy SceneManagers as cards enter/leave the viewport.
+    // This keeps active WebGL contexts well below the browser limit (~8 in Chrome).
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const card = entry.target;
+        const projectId = card.dataset.project;
+        const canvas = card.querySelector('.project-canvas');
+        if (!canvas) return;
+
+        if (entry.isIntersecting) {
+          if (!this.scenes.has(projectId)) {
+            const scene = new SceneManager(canvas, projectId);
+            this.scenes.set(projectId, scene);
+          }
+        } else {
+          if (this.scenes.has(projectId)) {
+            this.scenes.get(projectId).dispose();
+            this.scenes.delete(projectId);
+          }
+        }
+      });
+    }, {
+      // Pre-initialise a card just before it scrolls into view so there's no
+      // visible pop-in, and keep it alive a little after it leaves.
+      rootMargin: '150px 0px 150px 0px',
+      threshold: 0,
+    });
+
     projectCards.forEach(card => {
+      this.observer.observe(card);
+
       const projectId = card.dataset.project;
-      const canvas = card.querySelector('.project-canvas');
-      
-      if (canvas) {
-        const scene = new SceneManager(canvas, projectId);
-        this.scenes.set(projectId, scene);
-      }
-      
+
       // Add click handlers
       const expandBtn = card.querySelector('.project-expand');
       if (expandBtn) {

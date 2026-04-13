@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
+    "globe.gl": "^2.35.0",
     "three": "^0.160.0"
   },
   "devDependencies": {

@@ -6,7 +6,7 @@ const BASE_URL = import.meta?.env?.BASE_URL
   ? new URL(import.meta.env.BASE_URL, window.location.origin).toString()
   : new URL('./', document.baseURI).toString();
 
-const MODEL_BASE_PATHS = [
+export const MODEL_BASE_PATHS = [
   new URL('models/', BASE_URL).toString(),
   new URL('public/models/', BASE_URL).toString(),
 ];
@@ -93,7 +93,7 @@ export const PLY_MODELS_CONFIG = [
     title: 'Mythical Form',
     subtitle: 'Organic complexity and detailed surface modeling',
     tags: ['Character', 'Organic', 'Fantasy'],
-    scale: 1.0,
+    scale: 2.0,
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     projectId: '7'
@@ -147,6 +147,36 @@ export const PLY_MODELS_CONFIG = [
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     projectId: '12'
+  },
+  {
+    filename: 'twoface.glb',
+    title: 'Ejagham Mask',
+    subtitle: 'Character modeling and facial feature exploration',
+    tags: ['Portrait', 'Character', 'Study'],
+    scale: 2  ,
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 45, z: 0 },
+    projectId: '13'
+  },
+  {
+    filename: 'homonculus.glb',
+    title: 'Iyoba Idia Mask',
+    subtitle: 'Character modeling and facial feature exploration',
+    tags: ['Portrait', 'Character', 'Study'],
+    scale: 2  ,
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    projectId: '14'
+  },
+  {
+    filename: 'iyoba.glb',
+    title: 'Oba Mask',
+    subtitle: 'Character modeling and facial feature exploration',
+    tags: ['Portrait', 'Character', 'Study'],
+    scale: 1.5  ,
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    projectId: '15'
   }
 ];
 

@@ -91,16 +91,16 @@ export class HeroTextScene {
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         
-        // Center the model
-        this.treeModel.position.x = -center.x;
-        this.treeModel.position.y = -center.y;
-        this.treeModel.position.z = -center.z;
-        
         // Scale the model to fit nicely in the scene
         // Make it tall enough to span across hero and beyond
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = 20 / maxDim;
         this.treeModel.scale.set(scale, scale, scale);
+        
+        // Center the model properly by applying the offset multiplied by scale
+        this.treeModel.position.x = -center.x * scale;
+        this.treeModel.position.y = -center.y * scale;
+        this.treeModel.position.z = -center.z * scale;
         
         // Ensure materials are properly set
         this.treeModel.traverse((child) => {

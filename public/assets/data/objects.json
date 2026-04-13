@@ -59,7 +59,7 @@
     "id": "9",
     "number": "09",
     "title": "Dan Mask",
-    "description": "Scared women's face",
+    "description": "Scarred women's face",
     "tags": ["Ivory Coast", "Liberia", "Dan"]
   },
   {
@@ -82,5 +82,26 @@
     "title": "Muminia Mask",
     "description": "The Lega people originally came from Uganda further to the Northeast, and they were likely the first ones to settle in the Umaniema region of the Congo. Their whole political and religious world is run by the Bwami association. It’s pretty specific to them, even though you see similar groups with different names in other nearby tribes.\n\nThis particular mask is a muminia type. Each community only ever had one of them, which is a big deal. For any initiation to any grade to actually happen, the muminia had to be there. It’s the mask they use for the very first Bwami initiation, and it represents a bit of a contradiction—it stands for a high-ranking, powerful member of the association, but also a troublemaker. It’s got a bit of both in it.",
     "tags": ["DR Congo", "Lega", "Bwami"]
+  },
+  {
+    "id": "13",
+    "number": "13",
+    "title": "Ejagham Mask",
+    "description": "The Ejagham people are a group of ethnic groups in southeastern Nigeria. They are known for their elaborate masks, which are used in various rituals and ceremonies. The Ejagham masks are made of wood and are decorated with intricate carvings and designs. They are often used in rituals to honor ancestors and to ward off evil spirits. The Ejagham masks are also used in ceremonies to celebrate the harvest and to mark important life events such as weddings and funerals.",
+    "tags": ["Nigeria", "Ejagham"]
+  },
+  {
+    "id": "14",
+    "number": "14",
+    "title": "Iyoba Idia Mask",
+    "description": "This mask represents Queen Idia, born in Usi in present-day Edo State in the late 15th century, remains one of the most celebrated figures in the history of the Benin Kingdom. She rose from humble beginnings to become the mother of Oba Esigie and the first Iyoba, or Queen Mother, establishing a precedent for women in leadership within the kingdom. Her life, influence, and legacy span court politics, military strategy, and cultural representation, reflecting both her personal skill and the significance of female authority in Benin society.\n\nBy the 1970s, the British Museum was still playing a classic game of \"strategic ignorance.\" Despite the mask being identified as Queen Mother Idia decades earlier, curators kept it comfortably nameless—just another \"ivory object\" to keep things impersonal.\n\nWhile diplomats considered returning it, the museum staff dug in with some truly greasy tactics. One anonymous official had the gall to whine, \"Why pick on Britain?\" before suggesting, with a heart of pure lead, that Nigeria just \"buy one back\" on the open market.\n\nTo these people, a stolen sacred icon wasn't a piece of a nation's soul—it was just an interchangeable commodity. They even argued that since other versions existed, the Nigerians should stop being so picky and go bother Berlin or New York instead. It’s a masterclass in bureaucratic bad faith.",
+    "tags": ["Benin", "Edo"]
+  },
+  {
+    "id": "15",
+    "number": "15",
+    "title": "Oba Mask",
+    "description": "This is mask of the Oba of Benin, the king of the Benin Kingdom. This one is from the hereditary brass-casters guild Igun Eronmwon.\n\nThe obas of Benin trace their origins to a ruling dynasty that began in the fourteenth century. The title of oba is passed on to the firstborn son at the time of the ruler’s death. The first obligation of the new king was to create a shrine, dedicated to his predecessor and serving as the site at which the living monarch communicated with his ancestor or father. Ensuring dynastic continuity, the shrine held various carved and cast artifacts, including freestanding brass heads such as this one.",
+    "tags": ["Benin", "Igun Eronmwon"]
   }
 ]
