@@ -60,9 +60,12 @@ export class SceneManager {
     
     // Event listeners - only add mouse listeners on desktop
     if (!this.isMobile) {
-      this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-      this.canvas.addEventListener('mouseenter', () => this.isHovered = true);
-      this.canvas.addEventListener('mouseleave', () => this.isHovered = false);
+      this._onMouseMove = (event) => this.onMouseMove(event);
+      this._onMouseEnter = () => this.isHovered = true;
+      this._onMouseLeave = () => this.isHovered = false;
+      this.canvas.addEventListener('mousemove', this._onMouseMove);
+      this.canvas.addEventListener('mouseenter', this._onMouseEnter);
+      this.canvas.addEventListener('mouseleave', this._onMouseLeave);
     }
     
     // Start animation
@@ -213,7 +216,9 @@ export class SceneManager {
     }
     
     if (!this.isMobile) {
-      this.canvas.removeEventListener('mousemove', this.onMouseMove);
+      this.canvas.removeEventListener('mousemove', this._onMouseMove);
+      this.canvas.removeEventListener('mouseenter', this._onMouseEnter);
+      this.canvas.removeEventListener('mouseleave', this._onMouseLeave);
     }
   }
 }

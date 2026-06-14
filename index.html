@@ -1402,7 +1402,9 @@
           <div class="project-number">13</div>
           <div class="project-content">
             <h3 class="project-title">Ekoi Mask</h3>
-            <p class="project-description">In the Ekoi's approach to make 2-sided masks, the darker side represented the male force, and the whiter side the female force. \n\nThis particular mask has Nsibidi symbols on it, which is a writing system used by the Ekoi people. Those ones, I can't quite read yet but i'm sure i will soon enough ¯\_(ツ)_/¯</p>
+            <p class="project-description">In the Ekoi's approach to make 2-sided masks, the darker side represented the male force, and the whiter side the female force.
+
+This particular mask has Nsibidi symbols on it, which is a writing system used by the Ekoi people. Those ones, I can't quite read yet but i'm sure i will soon enough ¯\_(ツ)_/¯</p>
             <div class="project-tags">
               <span class="tag">Nigeria</span>
               <span class="tag">Ekoi</span>
@@ -1426,6 +1428,12 @@
               <span class="tag">Iyoba</span>
             </div>
           </div>
+          <div class="project-3d-container" data-3d-target="14">
+            <canvas class="project-canvas" id="canvas-14"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
         </article>
         <!-- Project 15 -->
         <article class="project-card" data-project="15" data-scroll-animate>
@@ -1438,6 +1446,12 @@
               <span class="tag">Oba</span>
             </div>
           </div>
+          <div class="project-3d-container" data-3d-target="15">
+            <canvas class="project-canvas" id="canvas-15"></canvas>
+          </div>
+          <button class="project-expand" aria-label="Expand project">
+            <span class="expand-icon">+</span>
+          </button>
         </article>
       </div>
     </div>
@@ -1643,6 +1657,36 @@
         position: { x: 0, y: 0, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
         projectId: '12'
+      },
+      {
+        filename: 'twoface.glb',
+        title: 'Ejagham Mask',
+        subtitle: 'Character modeling and facial feature exploration',
+        tags: ['Portrait', 'Character', 'Study'],
+        scale: 2,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: Math.PI / 4, z: 0 },
+        projectId: '13'
+      },
+      {
+        filename: 'homonculus.glb',
+        title: 'Iyoba Idia Mask',
+        subtitle: 'Character modeling and facial feature exploration',
+        tags: ['Portrait', 'Character', 'Study'],
+        scale: 2,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '14'
+      },
+      {
+        filename: 'iyoba.glb',
+        title: 'Oba Mask',
+        subtitle: 'Character modeling and facial feature exploration',
+        tags: ['Portrait', 'Character', 'Study'],
+        scale: 1.5,
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+        projectId: '15'
       }
     ];
 
@@ -2162,8 +2206,10 @@
 
         this.loadTreeModel();
 
-        window.addEventListener('mousemove', this.onMouseMove.bind(this));
-        window.addEventListener('resize', this.handleResize.bind(this));
+        this._onMouseMove = (event) => this.onMouseMove(event);
+        this._onResize = () => this.handleResize();
+        window.addEventListener('mousemove', this._onMouseMove);
+        window.addEventListener('resize', this._onResize);
 
         this.animate();
       }
@@ -2282,8 +2328,8 @@
           this.renderer.dispose();
         }
 
-        window.removeEventListener('mousemove', this.onMouseMove);
-        window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener('mousemove', this._onMouseMove);
+        window.removeEventListener('resize', this._onResize);
       }
     }
 
@@ -2388,8 +2434,7 @@
           const easedProgress = easeOutQuart(shapeProgress);
 
           const startX = 10;
-          const targetPos = shape.userData.targetPosition;
-          const endX = typeof targetPos === 'object' ? targetPos.x : targetPos.x || 0;
+          const endX = shape.userData.targetPosition.x;
           shape.position.x = startX + (endX - startX) * easedProgress;
 
           const scale = easedProgress;
@@ -2503,13 +2548,58 @@
 
       init() {
         const projectCards = document.querySelectorAll('.project-card');
+
+        // Lazily create/dispose WebGL scenes as cards enter/leave the viewport.
+        // Browsers cap the number of live WebGL contexts (commonly ~16); with
+        // 15 project cards plus the hero and horizontal-scroll scenes, creating
+        // every context up front exceeds that cap and evicts the oldest one.
+        const sceneObserver = new IntersectionObserver((entries) => {
+          // Dispose first so contexts that left the viewport free up the
+          // browser's WebGL context budget before any new ones are created.
+          entries.forEach(entry => {
+            if (entry.isIntersecting) return;
+
+            const card = entry.target;
+            const projectId = card.dataset.project;
+            const scene = this.scenes.get(projectId);
+            if (scene) {
+              scene.dispose();
+              this.scenes.delete(projectId);
+
+              const canvas = card.querySelector('.project-canvas');
+              if (canvas) canvas.dataset.contextLost = 'true';
+            }
+          });
+
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const card = entry.target;
+            const projectId = card.dataset.project;
+            if (this.scenes.has(projectId)) return;
+
+            let canvas = card.querySelector('.project-canvas');
+            if (!canvas) return;
+
+            // A canvas whose WebGL context was lost via forceContextLoss()
+            // can never host a new context again, so swap in a fresh node.
+            if (canvas.dataset.contextLost === 'true') {
+              const fresh = canvas.cloneNode(false);
+              delete fresh.dataset.contextLost;
+              canvas.replaceWith(fresh);
+              canvas = fresh;
+            }
+
+            this.scenes.set(projectId, new SceneManager(canvas, projectId));
+          });
+        }, { rootMargin: '100px 0px' });
+
         projectCards.forEach(card => {
           const projectId = card.dataset.project;
           const canvas = card.querySelector('.project-canvas');
 
           if (canvas) {
-            const scene = new SceneManager(canvas, projectId);
-            this.scenes.set(projectId, scene);
+            sceneObserver.observe(card);
           }
 
           const expandBtn = card.querySelector('.project-expand');
@@ -2563,7 +2653,18 @@
 
         if (this.modalScene) {
           this.modalScene.dispose();
+          this.modalCanvas.dataset.contextLost = 'true';
         }
+
+        // A canvas whose WebGL context was lost via forceContextLoss()
+        // can never host a new context again, so swap in a fresh node.
+        if (this.modalCanvas.dataset.contextLost === 'true') {
+          const fresh = this.modalCanvas.cloneNode(false);
+          delete fresh.dataset.contextLost;
+          this.modalCanvas.replaceWith(fresh);
+          this.modalCanvas = fresh;
+        }
+
         this.modalScene = new ModalSceneManager(this.modalCanvas, projectId);
 
         this.modal.classList.add('active');
@@ -2640,6 +2741,7 @@
         if (this.modalScene) {
           this.modalScene.dispose();
           this.modalScene = null;
+          this.modalCanvas.dataset.contextLost = 'true';
         }
 
         this.currentProject = null;

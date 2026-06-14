@@ -153,9 +153,9 @@ export const PLY_MODELS_CONFIG = [
     title: 'Ejagham Mask',
     subtitle: 'Character modeling and facial feature exploration',
     tags: ['Portrait', 'Character', 'Study'],
-    scale: 2  ,
+    scale: 2,
     position: { x: 0, y: 0, z: 0 },
-    rotation: { x: 0, y: 45, z: 0 },
+    rotation: { x: 0, y: Math.PI / 4, z: 0 },
     projectId: '13'
   },
   {
@@ -163,7 +163,7 @@ export const PLY_MODELS_CONFIG = [
     title: 'Iyoba Idia Mask',
     subtitle: 'Character modeling and facial feature exploration',
     tags: ['Portrait', 'Character', 'Study'],
-    scale: 2  ,
+    scale: 2,
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     projectId: '14'
@@ -173,7 +173,7 @@ export const PLY_MODELS_CONFIG = [
     title: 'Oba Mask',
     subtitle: 'Character modeling and facial feature exploration',
     tags: ['Portrait', 'Character', 'Study'],
-    scale: 1.5  ,
+    scale: 1.5,
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     projectId: '15'

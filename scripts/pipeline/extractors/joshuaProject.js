@@ -54,7 +54,7 @@ async function extractJoshuaProjectData(name, url) {
     });
 
     // Fallback: search scripts
-    if (!lat || !lon) {
+    if (lat === null || lon === null) {
       $('script').each((i, el) => {
         const scriptContent = $(el).html();
         if (scriptContent && scriptContent.includes('latitude') && scriptContent.includes('longitude')) {
@@ -66,7 +66,7 @@ async function extractJoshuaProjectData(name, url) {
       });
     }
 
-    if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
+    if (lat !== null && lon !== null && !isNaN(lat) && !isNaN(lon)) {
       result.coordinatesList.push({ lat, lon });
     }
 
