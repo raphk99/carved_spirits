@@ -106,6 +106,56 @@
       overflow-x: hidden;
     }
 
+    body.is-loading {
+      overflow: hidden;
+    }
+
+    /* Splash Screen */
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-bg);
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .splash-screen.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      font-size: clamp(2.5rem, 10vw, 6rem);
+      font-weight: 300;
+      line-height: 0.95;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .splash-title-line {
+      position: relative;
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--color-text-muted);
+    }
+
+    .splash-title-line::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      color: var(--color-accent);
+      clip-path: inset(0 calc(100% - var(--splash-progress, 0%)) 0 0);
+      transition: clip-path 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
     .container {
       max-width: 1400px;
       margin: 0 auto;
@@ -443,9 +493,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      opacity: 0.4;
+      /* Dimmed at rest, full on hover (desktop). Was 0.4, which made the
+         masks look badly lit, especially on phones where hover never happens. */
+      opacity: 0.75;
       transition: opacity var(--transition-smooth);
       pointer-events: none;
+    }
+
+    @media (hover: none) {
+      .project-3d-container {
+        opacity: 1;
+      }
     }
 
     .project-canvas {
@@ -1095,7 +1153,15 @@
   </style>
 </head>
 
-<body>
+<body class="is-loading">
+  <!-- Splash Screen -->
+  <div class="splash-screen" id="splash-screen" role="status" aria-live="polite" aria-label="Loading Carved Spirits">
+    <div class="splash-title">
+      <span class="splash-title-line" data-text="Carved">Carved</span>
+      <span class="splash-title-line" data-text="Spirits">Spirits</span>
+    </div>
+  </div>
+
   <!-- Navigation -->
   <nav class="nav">
     <div class="nav-container">
@@ -1524,7 +1590,8 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import Lenis from '@studio-freight/lenis';
-    import { SceneManager, ModalSceneManager } from './js/three-scene.js';
+    import { SceneManager, ModalSceneManager, applyStudioLighting, prepareMaskMaterials, getPixelRatio, IS_TOUCH_DEVICE } from './js/three-scene.js';
+    import { PLYModelLoader as CardModelLoader, PLY_MODELS_CONFIG as CARD_MODELS_CONFIG } from './js/ply-model-loader.js';
 
     // Detect base URL for GitHub Pages or local development
     const BASE_URL = window.location.pathname.includes('/carved_spirits/')
@@ -1535,6 +1602,33 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
       BASE_URL + 'models/',
       BASE_URL + 'public/models/'
     ];
+
+    /**
+     * On phones, showing/hiding the browser address bar while scrolling fires
+     * `resize` with only the height changing. Re-sizing every WebGL canvas on
+     * each of those caused visible hitches mid-scroll, so on touch devices we
+     * only react when the width actually changes (rotation, real resize).
+     */
+    function viewportResizeHandler(callback) {
+      let lastWidth = window.innerWidth;
+      return () => {
+        const width = window.innerWidth;
+        if (IS_TOUCH_DEVICE && width === lastWidth) return;
+        lastWidth = width;
+        callback();
+      };
+    }
+
+    /** Tracks whether an element is on screen so offscreen scenes skip rendering. */
+    function observeVisibility(element, target) {
+      target.isVisible = true;
+      if (!element || !('IntersectionObserver' in window)) return null;
+      const observer = new IntersectionObserver(([entry]) => {
+        target.isVisible = entry.isIntersecting;
+      }, { rootMargin: '200px 0px' });
+      observer.observe(element);
+      return observer;
+    }
 
     // ===== PLY Model Loader =====
     const PLY_MODELS_CONFIG = [
@@ -1719,6 +1813,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
                   child.receiveShadow = true;
                 }
               });
+              prepareMaskMaterials(object);
 
               object.scale.set(config.scale, config.scale, config.scale);
               object.position.set(
@@ -2119,6 +2214,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
 
     function initHorizontalScrollAnimation(lenis, horizontalScene) {
       const horizontalSection = document.getElementById('horizontal-scroll');
+      const stickyContainer = horizontalSection && horizontalSection.querySelector('.horizontal-scroll-container');
       const progressBar = document.querySelector('.progress-bar');
 
       if (!horizontalSection || !horizontalScene) return;
@@ -2126,7 +2222,10 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
       lenis.on('scroll', ({ scroll }) => {
         const sectionTop = horizontalSection.offsetTop;
         const sectionHeight = horizontalSection.offsetHeight;
-        const viewportHeight = window.innerHeight;
+        // Use the sticky container's CSS height (100vh) rather than
+        // window.innerHeight, which changes as the mobile address bar
+        // shows/hides and made the models jump mid-scroll.
+        const viewportHeight = stickyContainer ? stickyContainer.offsetHeight : window.innerHeight;
 
         const sectionStart = sectionTop;
         const sectionEnd = sectionTop + sectionHeight - viewportHeight;
@@ -2186,9 +2285,11 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
           antialias: true,
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight * 1.5);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(getPixelRatio());
         this.renderer.setClearColor(0x000000, 0);
 
+        // The tree keeps its original lighting (the mask studio lighting and
+        // material fix are intentionally not applied to it).
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         this.scene.add(ambientLight);
 
@@ -2207,9 +2308,10 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
         this.loadTreeModel();
 
         this._onMouseMove = (event) => this.onMouseMove(event);
-        this._onResize = () => this.handleResize();
+        this._onResize = viewportResizeHandler(() => this.handleResize());
         window.addEventListener('mousemove', this._onMouseMove);
         window.addEventListener('resize', this._onResize);
+        this.visibilityObserver = observeVisibility(this.canvas, this);
 
         this.animate();
       }
@@ -2277,6 +2379,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
 
       animate() {
         this.animationId = requestAnimationFrame(this.animate.bind(this));
+        if (!this.isVisible) return;
 
         if (this.treeModel) {
           this.targetRotation.y = this.mouse.x * 0.1;
@@ -2302,7 +2405,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
         this.camera.updateProjectionMatrix();
 
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(getPixelRatio());
       }
 
       dispose() {
@@ -2330,6 +2433,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
 
         window.removeEventListener('mousemove', this._onMouseMove);
         window.removeEventListener('resize', this._onResize);
+        if (this.visibilityObserver) this.visibilityObserver.disconnect();
       }
     }
 
@@ -2362,22 +2466,14 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
           antialias: true,
         });
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(getPixelRatio());
         this.renderer.setClearColor(0x000000, 0);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        this.scene.add(ambientLight);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 5, 5);
-        this.scene.add(directionalLight);
-
-        const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
-        backLight.position.set(-5, -5, -5);
-        this.scene.add(backLight);
+        applyStudioLighting(this.renderer, this.scene);
 
         this.loadPLYModels();
 
+        this.visibilityObserver = observeVisibility(this.canvas, this);
         this.animate();
       }
 
@@ -2487,6 +2583,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
 
       animate() {
         this.animationId = requestAnimationFrame(this.animate.bind(this));
+        if (!this.isVisible) return;
 
         this.renderer.render(this.scene, this.camera);
       }
@@ -2504,7 +2601,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
         this.camera.updateProjectionMatrix();
 
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(getPixelRatio());
       }
 
       dispose() {
@@ -2627,9 +2724,9 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
           }
         });
 
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', viewportResizeHandler(() => {
           this.handleResize();
-        });
+        }));
       }
 
       openModal(projectId, card) {
@@ -2877,7 +2974,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
             this.camera.updateProjectionMatrix();
 
             this.renderer.setSize(width, height);
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            this.renderer.setPixelRatio(getPixelRatio());
           };
 
           setTimeout(() => {
@@ -2891,7 +2988,7 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
               aboutTreeScene.camera.position.set(0, 0, 20);
 
               aboutTreeScene.renderer.setSize(width, height);
-              aboutTreeScene.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+              aboutTreeScene.renderer.setPixelRatio(getPixelRatio());
             }
           }, 100);
         }
@@ -3004,6 +3101,54 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
       return animations;
     }
 
+    // ===== Splash Screen =====
+
+    /**
+     * Preloads every 3D asset used on the page (hero tree + all project
+     * card/modal models) so they're served from THREE.Cache once the real
+     * scenes load them, then reports progress for the splash text reveal.
+     */
+    function preloadAllModels(onProgress, onComplete) {
+      THREE.Cache.enabled = true;
+
+      const manager = new THREE.LoadingManager();
+      manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+        onProgress(itemsTotal > 0 ? itemsLoaded / itemsTotal : 1);
+      };
+      manager.onError = (url) => {
+        console.warn(`Splash preload: failed to load ${url}`);
+      };
+      manager.onLoad = onComplete;
+
+      // Preload the hero tree, following the same base-path fallback as HeroTextScene
+      const loadTree = (baseIndex = 0) => {
+        new GLTFLoader(manager).load(
+          MODEL_BASE_PATHS[baseIndex] + 'tree.glb',
+          () => {},
+          undefined,
+          () => {
+            if (baseIndex + 1 < MODEL_BASE_PATHS.length) {
+              loadTree(baseIndex + 1);
+            }
+          }
+        );
+      };
+      loadTree();
+
+      // Preload every project card / modal model
+      new CardModelLoader(manager).loadAllModels(CARD_MODELS_CONFIG);
+    }
+
+    function dismissSplash() {
+      document.body.classList.remove('is-loading');
+
+      const splash = document.getElementById('splash-screen');
+      if (!splash) return;
+
+      splash.classList.add('is-hidden');
+      splash.addEventListener('transitionend', () => splash.remove(), { once: true });
+    }
+
     // ===== Main Init =====
     function init() {
       // Initialize scroll-reactive header (includes logo and nav links)
@@ -3029,11 +3174,11 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
         horizontalScene = new HorizontalScrollScene(horizontalScrollContainer);
         initHorizontalScrollAnimation(lenis, horizontalScene);
 
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', viewportResizeHandler(() => {
           if (horizontalScene) {
             horizontalScene.handleResize();
           }
-        });
+        }));
       }
 
       const projectManager = new ProjectManager();
@@ -3050,10 +3195,22 @@ This particular mask has Nsibidi symbols on it, which is a writing system used b
     }
 
     // Start the app
+    function startApp() {
+      preloadAllModels(
+        (progress) => {
+          document.documentElement.style.setProperty('--splash-progress', `${progress * 100}%`);
+        },
+        () => {
+          dismissSplash();
+          init();
+        }
+      );
+    }
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+      document.addEventListener('DOMContentLoaded', startApp);
     } else {
-      init();
+      startApp();
     }
   </script>
 </body>

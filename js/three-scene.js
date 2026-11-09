@@ -1,6 +1,58 @@
 import * as THREE from 'three';
-import { PLYModelLoader, PLY_MODELS_CONFIG } from './ply-model-loader.js';
+import { PLYModelLoader, PLY_MODELS_CONFIG, prepareMaskMaterials } from './ply-model-loader.js';
 import { MobileControls } from './mobile-controls.js';
+
+export { prepareMaskMaterials };
+
+/** Touch devices: phones and tablets (used to lighten rendering and resize work). */
+export const IS_TOUCH_DEVICE =
+  typeof window !== 'undefined' &&
+  (('ontouchstart' in window) || navigator.maxTouchPoints > 0) &&
+  window.matchMedia('(pointer: coarse)').matches;
+
+/** Pixel ratio cap: full quality on desktop, lighter on phones (big GPU win). */
+export function getPixelRatio() {
+  return Math.min(window.devicePixelRatio || 1, IS_TOUCH_DEVICE ? 1.5 : 2);
+}
+
+/** Tweak these to make every mask scene brighter/darker at once. */
+export const STUDIO_LIGHTING = {
+  exposure: 1.5,
+  ambient: 4.0,
+  key: 5.0,
+  fill: 2.0,
+  rim: 2.5,
+};
+
+/**
+ * Bright, soft "studio" lighting shared by every scene that renders the masks.
+ * Uses plain lights only (no PMREM environment map) so creating a card scene
+ * while scrolling stays cheap on phones.
+ */
+export function applyStudioLighting(renderer, scene) {
+  // The scanned textures are dark wood (some average ~15% brightness), so the
+  // lights deliberately push well above 1.0; ACES keeps the lighter masks
+  // (e.g. whiteface) from clipping while lifting the dark ones.
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = STUDIO_LIGHTING.exposure;
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xc8bba8, STUDIO_LIGHTING.ambient));
+
+  // Key light from the front-top-right: carves out the relief of the face
+  const keyLight = new THREE.DirectionalLight(0xfff1e0, STUDIO_LIGHTING.key);
+  keyLight.position.set(4, 6, 10);
+  scene.add(keyLight);
+
+  // Fill from the left so the shadow side never goes black
+  const fillLight = new THREE.DirectionalLight(0xffffff, STUDIO_LIGHTING.fill);
+  fillLight.position.set(-8, 1, 6);
+  scene.add(fillLight);
+
+  // Rim from behind to separate the silhouette from the dark background
+  const rimLight = new THREE.DirectionalLight(0xffffff, STUDIO_LIGHTING.rim);
+  rimLight.position.set(0, 4, -10);
+  scene.add(rimLight);
+}
 
 /**
  * Three.js Scene Manager
@@ -40,20 +92,11 @@ export class SceneManager {
       antialias: true,
     });
     this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(getPixelRatio());
     this.renderer.setClearColor(0x000000, 0);
     
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-    this.scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    directionalLight.position.set(5, 5, 5);
-    this.scene.add(directionalLight);
-    
-    const backLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    backLight.position.set(-5, -5, -5);
-    this.scene.add(backLight);
+    applyStudioLighting(this.renderer, this.scene);
     
     // Load GLB models (geometric shapes removed - models only)
     this.loadPLYModels();
@@ -132,7 +175,8 @@ export class SceneManager {
       if (this.isMobile && this.plyModels.length > 0) {
         this.mobileControls = new MobileControls(this.canvas, this.camera, this.plyModels, {
           showToggle: false, // No toggle for project cards
-          initialMode: 'touch'
+          initialMode: 'touch',
+          allowPageScroll: true // vertical swipes on a card scroll the page
         });
       }
     } catch (error) {
@@ -180,7 +224,7 @@ export class SceneManager {
     this.camera.updateProjectionMatrix();
     
     this.renderer.setSize(width, height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(getPixelRatio());
   }
 
   dispose() {

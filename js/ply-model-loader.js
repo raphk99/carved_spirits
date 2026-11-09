@@ -6,6 +6,33 @@ const BASE_URL = import.meta?.env?.BASE_URL
   ? new URL(import.meta.env.BASE_URL, window.location.origin).toString()
   : new URL('./', document.baseURI).toString();
 
+/**
+ * The mask GLBs are photogrammetry scans: a single baked colour texture, no
+ * normals and no metallicFactor. glTF's default metallicFactor is 1, so three.js
+ * rendered them as rough *metal* (almost no diffuse light → dark), and the
+ * missing normals forced faceted flat shading. Turn them into matte surfaces
+ * with smooth normals so the lights actually reveal the carving.
+ */
+export function prepareMaskMaterials(object) {
+  object.traverse((child) => {
+    if (!child.isMesh) return;
+
+    if (child.geometry && !child.geometry.attributes.normal) {
+      child.geometry.computeVertexNormals();
+    }
+
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    materials.forEach((mat) => {
+      if (!mat) return;
+      if ('metalness' in mat) mat.metalness = 0;
+      if ('roughness' in mat) mat.roughness = 0.85;
+      mat.flatShading = false;
+      mat.needsUpdate = true;
+    });
+  });
+  return object;
+}
+
 export const MODEL_BASE_PATHS = [
   new URL('models/', BASE_URL).toString(),
   new URL('public/models/', BASE_URL).toString(),
@@ -185,8 +212,8 @@ export const PLY_MODELS_CONFIG = [
  * Handles loading and configuring GLB 3D models
  */
 export class PLYModelLoader {
-  constructor() {
-    this.loader = new GLTFLoader();
+  constructor(manager) {
+    this.loader = new GLTFLoader(manager);
     this.basePaths = MODEL_BASE_PATHS;
   }
 
@@ -226,10 +253,9 @@ export class PLYModelLoader {
               child.castShadow = true;
               child.receiveShadow = true;
 
-              // If the material needs adjustment, you can do it here
-              // For now, we keep the original materials from the GLB file
             }
           });
+          prepareMaskMaterials(object);
 
           // Apply transformations from config
           object.scale.set(config.scale, config.scale, config.scale);

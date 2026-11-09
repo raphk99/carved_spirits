@@ -10,10 +10,18 @@ import * as THREE from 'three';
  * Handles single-finger drag rotation and two-finger pinch zoom
  */
 class TouchControls {
-  constructor(canvas, camera, models) {
+  constructor(canvas, camera, models, options = {}) {
     this.canvas = canvas;
     this.camera = camera;
     this.models = models;
+
+    // When true (project cards inside the scrolling page), a mostly-vertical
+    // swipe is left to the browser so the page scrolls instead of the model
+    // grabbing the gesture. Only horizontal drags rotate the model.
+    this.allowPageScroll = options.allowPageScroll === true;
+    if (this.allowPageScroll) {
+      this.canvas.style.touchAction = 'pan-y';
+    }
     
     // Touch state
     this.touchState = {
@@ -24,6 +32,8 @@ class TouchControls {
       currentY: 0,
       lastX: 0,
       lastY: 0,
+      // null until the first move decides it: 'rotate' or 'scroll'
+      gestureAxis: null,
       deltaX: 0,
       deltaY: 0,
       velocity: { x: 0, y: 0 },
@@ -49,10 +59,13 @@ class TouchControls {
   }
   
   enable() {
-    this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
+    // touchstart/touchend stay passive in page-scroll mode so the browser never
+    // waits on JS before starting a scroll (and taps still produce clicks).
+    const passiveEnds = { passive: this.allowPageScroll };
+    this.canvas.addEventListener('touchstart', this.onTouchStart, passiveEnds);
     this.canvas.addEventListener('touchmove', this.onTouchMove, { passive: false });
-    this.canvas.addEventListener('touchend', this.onTouchEnd, { passive: false });
-    this.canvas.addEventListener('touchcancel', this.onTouchEnd, { passive: false });
+    this.canvas.addEventListener('touchend', this.onTouchEnd, passiveEnds);
+    this.canvas.addEventListener('touchcancel', this.onTouchEnd, passiveEnds);
   }
   
   disable() {
@@ -68,13 +81,14 @@ class TouchControls {
   }
   
   onTouchStart(event) {
-    event.preventDefault();
+    if (!this.allowPageScroll) event.preventDefault();
     
     const touches = event.touches;
     
     if (touches.length === 1) {
       // Single touch - rotation
       this.touchState.active = true;
+      this.touchState.gestureAxis = this.allowPageScroll ? null : 'rotate';
       this.touchState.isPinching = false;
       this.touchState.startX = touches[0].clientX;
       this.touchState.startY = touches[0].clientY;
@@ -105,9 +119,23 @@ class TouchControls {
   }
   
   onTouchMove(event) {
-    event.preventDefault();
-    
     const touches = event.touches;
+
+    // Decide once per gesture whether this swipe scrolls the page or rotates.
+    if (this.touchState.active && touches.length === 1 && this.touchState.gestureAxis === null) {
+      const dx = Math.abs(touches[0].clientX - this.touchState.startX);
+      const dy = Math.abs(touches[0].clientY - this.touchState.startY);
+      if (dx < 6 && dy < 6) return; // not enough movement to tell yet
+      this.touchState.gestureAxis = dx > dy ? 'rotate' : 'scroll';
+    }
+
+    if (this.touchState.gestureAxis === 'scroll' && !this.touchState.isPinching) {
+      // Let the browser scroll the page; leave the model alone.
+      this.touchState.active = false;
+      return;
+    }
+
+    if (event.cancelable) event.preventDefault();
     
     if (this.touchState.active && touches.length === 1) {
       // Single touch - calculate delta for rotation
@@ -149,15 +177,17 @@ class TouchControls {
   }
   
   onTouchEnd(event) {
-    event.preventDefault();
+    if (!this.allowPageScroll) event.preventDefault();
     
     if (event.touches.length === 0) {
       this.touchState.active = false;
       this.touchState.isPinching = false;
+      this.touchState.gestureAxis = null;
     } else if (event.touches.length === 1) {
       // Switched from two-finger to one-finger
       this.touchState.isPinching = false;
       this.touchState.active = true;
+      this.touchState.gestureAxis = 'rotate';
       this.touchState.lastX = event.touches[0].clientX;
       this.touchState.lastY = event.touches[0].clientY;
     }
@@ -360,7 +390,9 @@ export class MobileControls {
     this.mode = this.initialMode;
     
     // Control instances
-    this.touchControls = new TouchControls(canvas, camera, models);
+    this.touchControls = new TouchControls(canvas, camera, models, {
+      allowPageScroll: options.allowPageScroll === true
+    });
     this.gyroControls = new GyroControls(canvas, camera, models);
     
     // Initially disable gyro
